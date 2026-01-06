@@ -39,7 +39,7 @@ export class CategoryService {
         try {
             const result = await CategoryRepository.listCategoryById(id_shop, id)
             if (!result) {
-                const error = new Error('El id ingresado no existe')
+                const error = new Error('La categoría no existe')
                 error.status = 400
                 throw error
             }

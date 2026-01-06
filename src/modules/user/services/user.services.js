@@ -38,7 +38,6 @@ export class UserService {
                 SECRET_JWT_KEY,
                 { expiresIn: '1h' }
             )
-            // Redis NO debe romper el login
             try {
                 await redis.set(
                     `user:${user.id}:token`,
@@ -48,6 +47,7 @@ export class UserService {
             } catch (e) {
                 console.warn('Redis no disponible, seguimos sin cache');
             }
+            console.log('REDIS SET KEY:', `user:${user.id}:token`);
 
 
             return { user, token }
@@ -80,7 +80,7 @@ export class UserService {
 
     async listUsers(id_shop, active) {
         try {
-       
+
 
             const where = { id_shop }
 

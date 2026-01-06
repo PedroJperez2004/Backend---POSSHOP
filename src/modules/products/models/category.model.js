@@ -6,10 +6,10 @@ class Category extends Model { }
 Category.init(
     {
         id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-        name: { type: DataTypes.STRING(100), allowNull: false, unique: true },
+        name: { type: DataTypes.STRING(100), allowNull: false },
         description: { type: DataTypes.TEXT, allowNull: true },
-        active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
         id_shop: { type: DataTypes.INTEGER, allowNull: false }, // nueva columna
+        active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     },
     {
         sequelize,

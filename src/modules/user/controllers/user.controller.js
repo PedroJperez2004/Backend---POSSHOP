@@ -119,13 +119,13 @@ export class UserController {
         }
     }
 
-    async activateUser(req, res) {
+    async activateUser(req, res) {  //Esto es de activacion de user
         try {
             const id_shop = req.user.id_shop
             const { id } = req.params
 
-            const user = await this.userService.listUserById(id_shop, id)
-            const result = await this.userService.activateUser(user.id)
+            const users = await this.userService.listUserById(id_shop, id)
+            const result = await this.userService.activateUser(users.id)
 
             return res.status(200).json({
                 result: result

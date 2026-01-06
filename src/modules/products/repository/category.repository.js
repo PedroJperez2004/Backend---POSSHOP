@@ -2,10 +2,16 @@ import models from '../../index.js'
 import { Op } from 'sequelize'
 export class CategoryRepository {
     static createCategory = async (name, description, id_shop, active) => {
+
         try {
             return await models.Category.create({ name, description, id_shop, active })
         } catch (error) {
-            throw new Error(`Error al crear el usuario: ${error.message}`)
+            console.log('NAME:', error.name);
+            console.log('MESSAGE:', error.message);
+            console.log('ERRORS:', error.errors);
+            console.log('PARENT:', error.parent);
+            console.log('ORIGINAL:', error.original);
+            throw new Error(`Error al crear la categoría: ${error.message}`)
         }
 
 
@@ -33,11 +39,8 @@ export class CategoryRepository {
 
             return result
 
-
-
         } catch (error) {
-            throw new Error('Error al obtener la categoría')
-
+            throw error
         }
 
     }
@@ -104,4 +107,6 @@ export class CategoryRepository {
 
         }
     }
+
+    
 }

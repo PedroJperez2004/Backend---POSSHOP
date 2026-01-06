@@ -28,6 +28,11 @@ module.exports = {
         allowNull: false,
         defaultValue: 1
       },
+      isMain: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       active: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

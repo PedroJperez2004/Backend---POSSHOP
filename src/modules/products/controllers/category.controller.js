@@ -73,21 +73,19 @@ export class CategoryController {
     }
     async desactivateCategory(req, res) {
         try {
-            const { id } = req.params
             const id_shop = req.user.id_shop
+            const { id } = req.params
             const category = await this.categoryService.listCategoryById(id_shop, id)
 
             const result = await this.categoryService.desactivateCategory(category.id)
 
             return res.status(200).json({
-                message: 'Categoria desactivada',
-                result
+                result: result
             })
 
         } catch (error) {
             return res
-                .status(error.status || 500)
-                .json({ message: error.message })
+                .status(error.status || 500).json({ message: error.message })
         }
     }
 
