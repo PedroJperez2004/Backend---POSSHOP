@@ -1,6 +1,6 @@
 import { ProductService } from "../services/product.service.js"
 import { CategoryService } from "../services/category.service.js"
-
+import { saveImages } from '../../../utils/saveImages.js'
 export class ProductController {
     constructor() {
         this.categoryService = new CategoryService()
@@ -12,20 +12,21 @@ export class ProductController {
             if (!req.files || req.files.length === 0) {
                 throw new Error('Debe agregar al menos una imagen ')
             }
+            if (req.files.length > 5) {
+                throw new Error('Máximo 5 imagenes')
+            }
+            const images = await saveImages(req.files, 'products');
+
             const category = await this.categoryService.listCategoryById(req.user.id_shop, req.body.id_category)
             if (category.active !== true) {
                 throw new Error('Categoría inactiva, seleccione otra')
             }
 
             const data = {
-                ...req.body,
-                id_shop: req.user.id_shop,
-                id_category: category.id
+                ...req.body, id_shop: req.user.id_shop, id_category: category.id
             }
             const dataFiles = {
-                ...req.files,
-                alt_text: req.body.alt_text
-                //
+                images, alt_text: req.body.alt_text
             }
 
             const result = await this.productService.create(data, dataFiles)

@@ -27,13 +27,12 @@ export const productSchema = z.object({
         .optional()
         .nullable(),
 
-    id_shop: z
-        .coerce.number()
-        .int()
-        .positive('La tienda es obligatoria'),
-
     active: z
         .coerce.boolean()
         .optional()
         .default(true),
+    alt_text: z
+        .string()
+        .optional()
+        .nullable(),
 });

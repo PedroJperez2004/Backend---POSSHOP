@@ -3,12 +3,7 @@ import { deleteImages } from "../../../utils/deleteImages.js";
 export class ProductService {
     async create(data, dataFiles) {
         try {
-            const filesArray = Object.values(dataFiles).filter(file => file && file.filename);
-
-            const url = filesArray.map(file => `/storage/uploads/products/${file.filename}`);
-
-            console.log('datos en servies: ', url)
-            const result = await ProductRepository.create(data, url)
+            const result = await ProductRepository.create(data, dataFiles.images)
             return { message: 'Creacion de producto exitosa', result: result }
 
         } catch (error) {

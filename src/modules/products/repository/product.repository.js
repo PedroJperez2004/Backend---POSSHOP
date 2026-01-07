@@ -5,25 +5,28 @@ export class ProductRepository {
     static create = async (data, url) => {
         try {
             const { name, description, price, stock, id_category, alt_text, id_shop } = data
-            console.log('URL: ', url)
+
             const productCreated = await models.Product.create({
                 name: name, description: description, price: price, stock: stock, id_category: id_category, id_shop: id_shop
             })
-            const imagesToCreate = url.map(img => ({
+            const imagesToCreate = url.map((img, index) => ({
                 product_id: productCreated.id,
                 url: img,
-                alt_text: alt_text
+                alt_text: alt_text,
+                order: index + 1,
+                isMain: index === 0
 
             }))
-            console.log(imagesToCreate)
             await models.ProductImage.bulkCreate(imagesToCreate)
+
+
             const productWithImages = await models.Product.findByPk(productCreated.id, {
                 include: 'images'
             });
+
             return productWithImages;
-
-
         } catch (error) {
+
             throw new Error(error.message)
 
         }

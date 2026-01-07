@@ -10,13 +10,16 @@ ProductImage.init(
         url: { type: DataTypes.STRING(255), allowNull: false },
         alt_text: { type: DataTypes.STRING(255), allowNull: true },
         order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
+        isMain: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
         active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+        createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+        updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     },
     {
         sequelize,
         modelName: 'ProductImage',
         tableName: 'product_images',
-        timestamps: true,
+        timestamps: true, // Sequelize seguirá manejando createdAt y updatedAt
     }
 );
 

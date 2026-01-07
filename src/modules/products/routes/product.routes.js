@@ -2,7 +2,7 @@
 import Router from "express";
 import { authenticate, authorize, validate, validatePartial } from '../../../middlewares/index.js'
 import { productSchema } from "../../../middlewares/validation/product.schema.js";
-import { uploadFile } from "../../../config/multer.config.js";
+import { uploadFile } from "../../../middlewares/uploads/upload.middleware.js";
 import { ProductController } from "../controllers/product.controller.js";
 import { updateCategoryProductsSchema } from "../../../middlewares/validation/product.update.category.schema.js";
 
@@ -11,9 +11,11 @@ export const productRoutes = Router()
 const productController = new ProductController()
 
 
-productRoutes.post('/create', uploadFile('products').array('images', 5), authenticate, authorize('admin'), validate(productSchema), (req, res) => {
+productRoutes.post('/create', uploadFile('products').array('images'), authenticate, authorize('admin'), validate(productSchema), (req, res) => {
     productController.createProduct(req, res)
 })
+
+
 
 productRoutes.get('/:id/list-products-by-category', authenticate, authorize('admin', 'employee'), (req, res) => {
     productController.listProductsByCategory(req, res)
