@@ -25,7 +25,6 @@ Product.init(
 Product.associate = (models) => {
     Product.belongsTo(models.Category, { foreignKey: 'id_category', as: 'category' });
     Product.belongsTo(models.Shop, { foreignKey: 'id_shop', as: 'shop' });
-    Product.hasMany(models.ProductPrice, { foreignKey: 'product_id', as: 'prices' });
     Product.hasMany(models.Inventory, { foreignKey: 'product_id', as: 'inventory' });
     Product.hasMany(models.SaleItem, { foreignKey: 'product_id', as: 'saleItems' });
     Product.hasMany(models.ProductImage, { foreignKey: 'product_id', as: 'images' });

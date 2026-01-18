@@ -1,13 +1,16 @@
-
 import models from "../../index.js"
 import sequelize from "../../../config/database.js";
-import { Op, where } from "sequelize";
+import { Op } from "sequelize";
 export class InventoryRepository {
 
-    static incrementInventory = async (product_id, quantity, type, note, id_shop) => {
-        const transaction = await sequelize.transaction(); //Iniciamos las queries en una transacción
-
+    static incrementInventory = async (product_id, quantity, type, note, id_shop, transaction = null) => {
+        let localTransaction = false;
         try {
+            if (!transaction) {
+                transaction = await sequelize.transaction()
+                localTransaction = true
+
+            }
             // 1️⃣ Incrementar stock
             await models.Product.increment(
                 'stock',
@@ -23,21 +26,31 @@ export class InventoryRepository {
                 product_id, quantity, type, note, id_shop
             }, { transaction }); //Usamos la transacción creada para agregar esta quiery a la misma sesión
 
-            await transaction.commit(); //Si todo sale bien, confirmamos las operaciones
+            if (localTransaction) {
+                await transaction.commit();
+            }
+
             return inventory;
 
         } catch (error) {
-            await transaction.rollback(); //Si hay un error, deshacemos todas las operaciones realizadas en la transacción
+            if (localTransaction) {
+                await transaction.rollback();
+            } //Si hay un error, deshacemos todas las operaciones realizadas en la transacción
             throw new Error('Error al incrementar el inventario: ' + error.message);
         }
     };
 
 
-    static decrementInventory = async (product_id, quantity, type, note, id_shop) => {
-        const transaction = await sequelize.transaction();  //Iniciamos las queries en una transacción
+    static decrementInventory = async (product_id, quantity, type, note, id_shop, transaction = null) => {
+        let localTransaction = false;
 
         try {
-            // 1️⃣ Decrementar solo si hay stock suficiente
+            if (!transaction) {
+                transaction = await sequelize.transaction();
+                localTransaction = true; // sabemos que somos dueños de esta transacción
+            }
+
+            // 1️⃣ Decrementar stock
             const affected = await models.Product.decrement(
                 'stock',
                 {
@@ -47,25 +60,31 @@ export class InventoryRepository {
                         id_shop,
                         stock: { [Op.gte]: quantity }
                     },
-                    transaction //Usamos la transacción creada para agregar esta quiery a la misma sesión
+                    transaction
                 }
             );
-            const [[, affectedRows]] = affected;  //SOLO Obtener el número de filas afectadas, se coloca de esta forma debido a la estructura del resultado devuelto por Sequelize, que es un array anidado, y que no es igual que en postgresql
+            const [[, affectedRows]] = affected;
             if (affectedRows === 0) {
                 throw new Error('Stock insuficiente');
             }
 
             // 2️⃣ Registrar movimiento
-            const inventory = await models.Inventory.create({
-                product_id, quantity, type, note, id_shop
-            }, { transaction });  //Usamos la transacción creada para agregar esta quiery a la misma sesión
+            const inventory = await models.Inventory.create(
+                { product_id, quantity, type, note, id_shop },
+                { transaction }
+            );
 
+            // 3️⃣ Commit solo si creamos la transacción aquí
+            if (localTransaction) {
+                await transaction.commit();
+            }
 
-            await transaction.commit();  //Si todo sale bien, confirmamos las operaciones
             return inventory;
 
         } catch (error) {
-            await transaction.rollback();  //Si hay un error, deshacemos todas las operaciones realizadas en la transacción
+            if (localTransaction) {
+                await transaction.rollback();
+            }
             throw new Error('Error al decrementar el inventario: ' + error.message);
         }
     };

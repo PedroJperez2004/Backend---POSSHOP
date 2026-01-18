@@ -32,3 +32,7 @@ userRoutes.patch('/:id/activate', authenticate, authorize('admin'), (req, res) =
 userRoutes.patch('/:id/update', authenticate, authorize('admin'), validatePartial(userSchema), (req, res) => {
     userController.update(req, res)
 })
+userRoutes.post('/refresh-token', (req, res) => {
+    userController.refreshToken(req, res)
+});
+

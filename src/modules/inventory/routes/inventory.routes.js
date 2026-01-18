@@ -11,7 +11,7 @@ const inventoryController = new InventoryController()
 // Crear movimiento (entrada o salida)
 inventoryRoutes.post('/movements', authenticate, authorize('admin', 'employee'), validate(inventorySchema), (req, res) => {
     inventoryController.createMovement(req, res)
-})
+}) 
 
 // Listar movimientos
 inventoryRoutes.get('/movements', authenticate, authorize('admin', 'employee'), (req, res) => {

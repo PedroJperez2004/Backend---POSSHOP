@@ -3,12 +3,19 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('sales', {
-      id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+      },
 
       user_id: {
         type: Sequelize.UUID,
         allowNull: false,
-        references: { model: 'users', key: 'id' }
+        references: {
+          model: 'users',
+          key: 'id'
+        }
       },
 
       sale_number: {
@@ -37,13 +44,21 @@ module.exports = {
       reverse_sale_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
-        references: { model: 'sales', key: 'id' }
+        references: {
+          model: 'sales',
+          key: 'id'
+        },
+        onDelete: 'SET NULL',   // ⭐ CLAVE
+        onUpdate: 'CASCADE'
       },
 
       id_shop: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'shops', key: 'id' }
+        references: {
+          model: 'shops',
+          key: 'id'
+        }
       },
 
       createdAt: {

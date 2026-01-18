@@ -125,4 +125,20 @@ export class ProductService {
         }
     }
 
+    async searchProductIds(id_shop, ids, transaction = null) {
+        try {
+            const result = await ProductRepository.searchProductIds(id_shop, ids, transaction)
+
+            const products_ids = result.map(p => p.id)
+            const missing = ids.filter(id => !products_ids.includes(id))
+            if (missing.length > 0) {
+                throw new Error('Estos productos no existen: ' + missing.join(', '))
+            }
+            return result
+
+        } catch (error) {
+            throw error
+        }
+    }
+
 }

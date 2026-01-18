@@ -31,6 +31,7 @@ export class ProductImagesRepository {
             return { message: 'Imagenes actualizadas correctamente', imagesToRemove }
 
         } catch (error) {
+            throw new Error(error.message)
 
 
         }

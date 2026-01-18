@@ -53,14 +53,14 @@ SaleItem.init(
         tableName: 'sale_items',
         timestamps: true,
 
-        hooks: {
-            beforeValidate: (item) => {
-                // El backend manda: subtotal = quantity × price
-                if (item.quantity && item.price) {
-                    item.subtotal = Number(item.quantity) * Number(item.price);
-                }
-            }
-        }
+        // hooks: {
+        //     beforeValidate: (item) => {
+        //         // El backend manda: subtotal = quantity × price
+        //         if (item.quantity && item.price) {
+        //             item.subtotal = Number(item.quantity) * Number(item.price);
+        //         }
+        //     }
+        // }
     }
 );
 

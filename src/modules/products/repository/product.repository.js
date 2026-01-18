@@ -1,5 +1,5 @@
 import models from "../../index.js"
-import { Op, where } from "sequelize";
+import { Op } from "sequelize";
 export class ProductRepository {
 
     static create = async (data, url) => {
@@ -185,6 +185,22 @@ export class ProductRepository {
             return ProductImages.map(img => img.url);
         } catch (error) {
             throw new Error('Error al eliminar el producto', error.message)
+        }
+    }
+    static searchProductIds = async (id_shop, ids, transaction = null) => {
+        try {
+
+            return await models.Product.findAll({
+                where: {
+                    id: {
+                        [Op.in]: ids,
+                    },
+                    id_shop: id_shop,
+                },
+                transaction: transaction || undefined  //TRANSACTION
+            })
+        } catch (error) {
+            return { message: error.message }
         }
     }
 }

@@ -16,6 +16,13 @@ export class UserController {
                 maxAge: 1000 * 60 * 60
             })
 
+            res.cookie('refresh_token', result.refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 7 // 7d
+            })
+
             return res.status(200).json({
                 ok: true,
                 user: result.user
@@ -32,7 +39,10 @@ export class UserController {
 
     async logout(req, res) {
         try {
-            await redis.del(`user:${req.user.id}:token`)
+            await redis.del(`user:${req.user.id}:token`,
+                `user:${id}:refreshToken`
+
+            )
             await res.clearCookie('access_token', {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
@@ -104,8 +114,6 @@ export class UserController {
             // 2️⃣ Desactivar usuario
             const result = await this.userService.desactivateUser(user.id)
 
-            await redis.del(`user:${id}:token`)
-
             // 4️⃣ Responder UNA vez
             return res.status(200).json({
                 message: 'Usuario desactivado y sesión cerrada',
@@ -156,6 +164,8 @@ export class UserController {
         }
 
     }
+
+
 
 }
 

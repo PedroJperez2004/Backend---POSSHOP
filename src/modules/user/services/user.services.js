@@ -38,7 +38,22 @@ export class UserService {
                 SECRET_JWT_KEY,
                 { expiresIn: '1h' }
             )
+
+            const refreshToken = jwt.sign(
+                {
+                    id: user.id,
+                    role: user.role,
+                    id_shop: user.id_shop
+                },
+                SECRET_JWT_KEY,
+                { expiresIn: '7d' }
+            )
             try {
+                await redis.set(
+                    `user:${user.id}:refreshToken`,
+                    refreshToken,
+                    { EX: 604800 } // 7d
+                );
                 await redis.set(
                     `user:${user.id}:token`,
                     token,
@@ -50,7 +65,7 @@ export class UserService {
             console.log('REDIS SET KEY:', `user:${user.id}:token`);
 
 
-            return { user, token }
+            return { user, token, refreshToken }
 
         } catch (error) {
             throw error
@@ -100,7 +115,7 @@ export class UserService {
         try {
             const result = await UserRepository.listUserById(id_shop, id)
             if (!result) {
-                const error = new Error('El id ingresado no existe')
+                const error = new Error('El usuario con el id especificado no existe')
                 error.status = 400
                 throw error
             }
@@ -118,7 +133,7 @@ export class UserService {
             if (filasAfectadas === 0) {
                 return { message: "El usuario ya estaba desactivado" }
             }
-            await redis.del(`User:${id}:token`)
+            await redis.del(`user:${id}:token`, `user:${id}:refreshToken`)
             return { message: 'Estado del usuario desactivado correctamente' }
 
         } catch (error) {
