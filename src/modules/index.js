@@ -7,7 +7,6 @@ import User from './user/models/user.model.js';
 import Category from './products/models/category.model.js';
 import Product from './products/models/product.model.js';
 import ProductImage from './products/models/product.image.js';
-import ProductPrice from './products/models/product.price.model.js';
 
 import Inventory from './inventory/models/inventory.model.js';
 
@@ -16,7 +15,7 @@ import SaleItem from './sales/models/sale.item.model.js';
 
 
 const models = {
-    Shop, LogsAuditoria, User, Category, Product, ProductImage, ProductPrice, Inventory, Sale, SaleItem
+    Shop, LogsAuditoria, User, Category, Product, ProductImage, Inventory, Sale, SaleItem
 };
 
 // Crear asociaciones si existen
