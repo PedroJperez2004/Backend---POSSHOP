@@ -12,7 +12,7 @@ export class UserController {
             res.cookie('access_token', result.token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                sameSite: 'none',
                 maxAge: 1000 * 60 * 60
 
             })
@@ -20,7 +20,7 @@ export class UserController {
             res.cookie('refresh_token', result.refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                sameSite: 'none',
                 maxAge: 1000 * 60 * 60 * 24 * 7 // 7d
             })
 
@@ -47,7 +47,7 @@ export class UserController {
             await res.clearCookie('access_token', {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                sameSite: 'none',
                 maxAge: 1000 * 60 * 60
 
             }).json({ message: 'Sesion cerrada' })

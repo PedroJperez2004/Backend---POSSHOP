@@ -23,7 +23,7 @@
 // export default cors(corsOptions);
 
 
-import cors from 'cors';
+import cors from 'http://localhost:5173';
 
 export default cors({
     origin: true,
