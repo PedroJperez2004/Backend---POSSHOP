@@ -2,3 +2,6 @@ node_modules
 .env
 dist
 coverage
+
+# Ignorar todo dentro de products
+storage/uploads/products/*
