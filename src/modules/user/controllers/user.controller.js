@@ -1,5 +1,5 @@
 import { UserService } from '../services/user.services.js'
-import { redis } from '../../../config/redis.client.js';
+import redis from '../../../config/redis.client.js';
 export class UserController {
     constructor() {
         this.userService = new UserService();

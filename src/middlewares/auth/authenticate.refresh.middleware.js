@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { REFRESH_JWT_SECRET } from '../../config/auth_config.js'
-import { redis } from '../../config/redis.client.js'
+import redis from '../../config/redis.client.js'
 
 export async function authenticateRefresh(req, res, next) {
     try {

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { redis } from '../../../config/redis.client.js';
+import redis from '../../../config/redis.client.js';
 import { SECRET_JWT_KEY } from '../../../config/auth_config.js';
 
 export class AuthController {

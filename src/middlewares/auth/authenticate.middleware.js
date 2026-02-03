@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { SECRET_JWT_KEY } from '../../config/auth_config.js'
-import { redis } from '../../config/redis.client.js'
+import redis from '../../config/redis.client.js'
 
 export async function authenticate(req, res, next) {
     const token = req.cookies.access_token

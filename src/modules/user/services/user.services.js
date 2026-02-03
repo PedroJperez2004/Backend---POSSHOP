@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import { SECRET_JWT_KEY, SALT_ROUNDS, REFRESH_JWT_SECRET } from '../../../config/auth_config.js'
 import jwt from 'jsonwebtoken'
 import { UserRepository } from '../repository/User.repository.js'
-import { redis } from '../../../config/redis.client.js'
+import redis from '../../../config/redis.client.js'
 
 export class UserService {
 
