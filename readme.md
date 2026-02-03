@@ -58,25 +58,13 @@ Asegúrate de tener instalados los siguientes programas en tu sistema:
     ```
 
 3.  **Configurar variables de entorno:**
-    Crea un archivo `.env` en la raíz del proyecto y añade las siguientes variables. Puedes usar el archivo `.env.example` como plantilla si existe.
+    Crea un archivo `.env` en la raíz del proyecto y añade las siguientes variables. 
 
     ```env
-    # Configuración de la Base de Datos MySQL
-    DB_USER=posshop_user
-    DB_PASSWORD=posshop_pass
-    DB_NAME=posshop
     DB_HOST=localhost
-    DB_PORT=3306
-
-    # Configuración de Redis
-    REDIS_HOST=localhost
-    REDIS_PORT=6379
-
-    # Secretos para JWT
-    JWT_SECRET=tu_secreto_para_jwt
-    JWT_REFRESH_SECRET=tu_secreto_para_refresh_jwt
-
-    # Puerto de la aplicación
+    DB_NAME=posshop
+    DB_USER=root
+    DB_PASS=root
     PORT=3000
     ```
 
