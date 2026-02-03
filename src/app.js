@@ -18,6 +18,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config()
 const app = express()
+// 🔹 Ocultar que usamos Express
+app.disable('x-powered-by');
 app.use(json())
 app.use(cookieParser())
 app.use(cors)
