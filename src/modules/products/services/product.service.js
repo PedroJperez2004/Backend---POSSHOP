@@ -5,6 +5,11 @@ import { deleteImages } from "../../../utils/deleteImages.js";
 import { TaxService } from "./tax.service.js";
 import { saveImages } from "../../../utils/saveImages.js";
 
+import { deleteImagesToCloudinary } from "../../../utils/deleteToCloudinary.js";
+
+
+import { uploadToCloudinary } from "../../../utils/uploadToCloudinary.js";
+
 export class ProductService {
 
     constructor() {
@@ -25,7 +30,22 @@ export class ProductService {
                 throw new Error('Máximo 1 imagen')
             }
 
-            const images = await saveImages(files, 'products');
+            // const images = await saveImages(files, 'products');
+
+
+            console.log('FILLEEESSS', files)
+            // --- Subida a Cloudinary solo si todo pasa ---
+            const images = [];
+            for (const file of files) {
+                const url = await uploadToCloudinary(file, 'products'); // aquí sube
+                images.push(url);
+            }
+
+
+            console.log('IMAGENES', images)
+
+
+
             if (!body.stock) {
                 body.stock = 0
             }
@@ -52,15 +72,24 @@ export class ProductService {
         try {
             // 1. Solo procesamos imágenes si se subieron archivos nuevos (files existe y tiene contenido)
             if (files && files.length > 0) {
-                const newImages = await saveImages(files, 'products');
+                // const newImages = await saveImages(files, 'products');
 
+                const newImages = [];
+                for (const file of files) {
+                    const url = await uploadToCloudinary(file, 'products'); // aquí sube
+                    newImages.push(url);
+                }
                 if (newImages) {
                     // Obtenemos las imágenes actuales antes de borrarlas
                     const currentImages = await ProductRepository.getProductImages(id_shop, id);
 
                     // Borramos los archivos físicos viejos solo porque hay nuevos
+                    // if (currentImages && currentImages.length > 0) {
+                    //     deleteImages(currentImages.map(img => img.url));
+                    // }
+
                     if (currentImages && currentImages.length > 0) {
-                        deleteImages(currentImages.map(img => img.url));
+                        await deleteImagesToCloudinary(currentImages.map(img => img.url));
                     }
 
                     // Actualizamos la base de datos con las nuevas rutas
@@ -179,7 +208,13 @@ export class ProductService {
             }
 
             const result = await ProductRepository.deleteProduct(id_shop, id)
-            deleteImages(result)
+            console.log('RESULLTTl: ', result)
+
+            if (result && result.length > 0) {
+                // IMPORTANTE: Usa await porque es una petición de red a Cloudinary
+                await deleteImagesToCloudinary(result);
+            }
+            // deleteImages(result)
             return { message: 'Producto eliminado correctamente' }
 
         } catch (error) {

@@ -72,9 +72,10 @@ export class UserService {
     }
 
     async register(userData) {
+        console.log('USERDADTAA": ', userData)
 
         const { userName, firstName, lastName, email, phone, password, role, id_shop, active } = userData
-        const hashPassword = await bcrypt.hash(password, SALT_ROUNDS)
+        const hashPassword = await bcrypt.hash(password, Number(SALT_ROUNDS))
 
         const user = await UserRepository.ifExistUsernameEmail(userName, email)
 
