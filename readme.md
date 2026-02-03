@@ -48,8 +48,8 @@ Asegúrate de tener instalados los siguientes programas en tu sistema:
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone <URL-DEL-REPOSITORIO>
-    cd <NOMBRE-DEL-DIRECTORIO>
+    git clone https://github.com/PedroJperez2004/Backend---POSSHOP.git
+    cd Backend---POSSHOP
     ```
 
 2.  **Instalar dependencias:**
