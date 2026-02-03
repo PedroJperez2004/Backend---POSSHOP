@@ -5,3 +5,6 @@ coverage
 
 # Ignorar todo dentro de products
 storage/uploads/products/*
+
+# PERO permitir este archivo
+!storage/uploads/products/.gitkeep
