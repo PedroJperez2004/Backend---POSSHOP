@@ -3,8 +3,8 @@
 module.exports = {
   async up(queryInterface) {
     await queryInterface.bulkInsert('shops', [{
-      name: 'POSSHOP Principal',
-      address: 'Calle 123',
+      name: 'POSSHOP',
+      address: 'Calle 123(Prueba)',
       createdAt: new Date(),
       updatedAt: new Date()
     }]);
