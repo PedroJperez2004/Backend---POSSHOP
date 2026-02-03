@@ -1,6 +1,6 @@
 import { InventoryRepository } from '../repository/inventory.repository.js'
 export class InventoryService {
-    async createMovement(product_id, quantity, type, note, id_shop, transaction = null) {
+    async createMovement(user_id, product_id, quantity, type, note, id_shop, transaction = null) {
         {
             try {
                 if (quantity <= 0) {
@@ -13,11 +13,11 @@ export class InventoryService {
                     throw error
                 }
                 if (type === 'in') {
-                    const result = await InventoryRepository.incrementInventory(product_id, quantity, type, note, id_shop, transaction)
+                    const result = await InventoryRepository.incrementInventory(user_id, product_id, quantity, type, note, id_shop, transaction)
                     return { message: 'Movimiento de entrada registrado', movement: result }
                 }
                 if (type === 'out') {
-                    const result = await InventoryRepository.decrementInventory(product_id, quantity, type, note, id_shop, transaction)
+                    const result = await InventoryRepository.decrementInventory(user_id, product_id, quantity, type, note, id_shop, transaction)
                     return { message: 'Movimiento de salida registrado', movement: result }
                 }
 

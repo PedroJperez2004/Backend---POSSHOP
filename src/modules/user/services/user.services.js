@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { SECRET_JWT_KEY, SALT_ROUNDS } from '../../../config/auth_config.js'
+import { SECRET_JWT_KEY, SALT_ROUNDS, REFRESH_JWT_SECRET } from '../../../config/auth_config.js'
 import jwt from 'jsonwebtoken'
 import { UserRepository } from '../repository/User.repository.js'
 import { redis } from '../../../config/redis.client.js'
@@ -45,7 +45,7 @@ export class UserService {
                     role: user.role,
                     id_shop: user.id_shop
                 },
-                SECRET_JWT_KEY,
+                REFRESH_JWT_SECRET,
                 { expiresIn: '7d' }
             )
             try {
@@ -62,10 +62,9 @@ export class UserService {
             } catch (e) {
                 console.warn('Redis no disponible, seguimos sin cache');
             }
-            console.log('REDIS SET KEY:', `user:${user.id}:token`);
 
-
-            return { user, token, refreshToken }
+            const userData = { id: user.id, userName: user.userName, firstName: user.firstName, lastName: user.lastName, email: user.email, phone: user.phone, role: user.role, id_shop: user.id_shop, active: user.active };
+            return { user: userData, token, refreshToken }
 
         } catch (error) {
             throw error

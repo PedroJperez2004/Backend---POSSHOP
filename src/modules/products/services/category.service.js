@@ -1,6 +1,10 @@
 import { CategoryRepository } from "../repository/category.repository.js";
+import { ProductService } from '../services/product.service.js'
 
 export class CategoryService {
+    constructor() {
+        this.productService = new ProductService()
+    }
 
     async createCategory(categoryData) {
         try {
@@ -18,8 +22,7 @@ export class CategoryService {
     }
     async listCategory(id_shop, active) {
         try {
-            console.log(active)
-            console.log(typeof active)
+          
 
             const where = { id_shop }
 
@@ -49,18 +52,18 @@ export class CategoryService {
             throw error
         }
     }
-    async updateCategory(id, data) {
+    async updateCategory(id_shop, id, data) {
         try {
-            const result = await CategoryRepository.updateCategory(id, data)
+            const result = await CategoryRepository.updateCategory(id_shop, id, data)
             return { User: result }
         } catch (error) {
             throw error
         }
     }
 
-    async desactivateCategory(id) {
+    async desactivateCategory(id_shop, id) {
         try {
-            const result = await CategoryRepository.desactivateCategory(id)
+            const result = await CategoryRepository.desactivateCategory(id_shop, id)
             const [filasAfectadas] = result
             if (filasAfectadas === 0) {
                 return { message: "La categoria ya estaba desactivada" }
@@ -73,15 +76,36 @@ export class CategoryService {
 
     }
 
-    async activateCategory(id) {
+    async activateCategory(id_shop, id) {
         try {
 
-            const result = await CategoryRepository.activateCategory(id)
+            const result = await CategoryRepository.activateCategory(id_shop, id)
             const [filasAfectadas] = result
             if (filasAfectadas === 0) {
                 return { message: "La categoria ya estaba activada" }
             }
             return { message: 'Estado de la categoria activada correctamente' }
+
+        } catch (error) {
+            throw error
+        }
+
+    }
+    async delete(id_shop, id) {
+        try {
+
+            const products = await this.productService.listProductsByCategory(id_shop, id)
+            if (products.length > 0) {
+                const error = new Error
+                error.status = 400
+                error.message = 'La categoría seleccionada tiene productos asociados, no es posible eliminarla'
+                throw error
+            }
+
+            const result = await CategoryRepository.delete(id_shop, id)
+            if (result > 0) {
+                return { message: "Categoría eliminada correctamente" }
+            }
 
         } catch (error) {
             throw error

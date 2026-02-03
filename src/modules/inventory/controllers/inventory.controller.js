@@ -8,10 +8,10 @@ export class InventoryController {
 
     async createMovement(req, res) {
         try {
-            const { id_shop } = req.user
+            const { id_shop, id } = req.user
             const { product_id, quantity, type, note } = req.body
             const idProduct = await this.productService.listProductById(id_shop, product_id)
-            const result = await this.inventoryService.createMovement(idProduct.id, quantity, type, note, id_shop)
+            const result = await this.inventoryService.createMovement(id, idProduct.id, quantity, type, note, id_shop)
 
             return res.status(201).json({ result: result })
         } catch (error) {
@@ -56,6 +56,6 @@ export class InventoryController {
             return res.status(error.status || 500).json({ message: error.message })
         }
     }
-  
+
 
 }

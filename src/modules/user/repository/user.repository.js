@@ -40,7 +40,8 @@ export class UserRepository {
     static listUsers = async ({ where }) => {
         try {
             return await models.User.findAll({
-                where
+                where,
+                attributes: { exclude: ['password'] }
             })
 
         } catch (errr) {
@@ -51,7 +52,6 @@ export class UserRepository {
 
     static listUserById = async (id_shop, id) => {
         try {
-            console.log(typeof id)
             const result = await User.findOne({
                 where: {
                     id: id,

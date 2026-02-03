@@ -18,8 +18,13 @@ export const productSchema = z.object({
     stock: z
         .coerce.number()
         .int('El stock debe ser un entero')
-        .min(0, 'El stock no puede ser negativo'),
+        .min(0, 'El stock no puede ser negativo')
+        .optional(),
 
+    id_tax: z
+        .coerce.number()
+        .int('El ID del impuesto debe ser un entero')
+        .min(0, 'El ID del impuesto no puede ser negativo'),
     id_category: z
         .coerce.number()
         .int()

@@ -5,6 +5,14 @@ module.exports = {
     await queryInterface.createTable('inventory', {
       id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
       product_id: { type: Sequelize.INTEGER, allowNull: false, references: { model: 'products', key: 'id' } },
+      user_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id'
+        }
+      },
       quantity: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
       type: { type: Sequelize.ENUM('in', 'out'), allowNull: false },
       note: { type: Sequelize.TEXT, allowNull: true },

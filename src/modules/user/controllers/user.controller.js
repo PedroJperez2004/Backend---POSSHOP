@@ -14,6 +14,7 @@ export class UserController {
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 60
+
             })
 
             res.cookie('refresh_token', result.refreshToken, {
@@ -40,7 +41,7 @@ export class UserController {
     async logout(req, res) {
         try {
             await redis.del(`user:${req.user.id}:token`,
-                `user:${id}:refreshToken`
+                `user:${req.user.id}:refreshToken`
 
             )
             await res.clearCookie('access_token', {
@@ -52,7 +53,7 @@ export class UserController {
             }).json({ message: 'Sesion cerrada' })
 
         } catch (error) {
-            res.status(500).json({ message: 'Error interno', error: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 

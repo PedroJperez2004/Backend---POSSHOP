@@ -3,11 +3,13 @@ import { z } from 'zod';
 export const categorySchema = z.object({
     name: z
         .string({
-            required_error: 'El nombre de la categoría es obligatorio',
-            invalid_type_error: 'El nombre debe ser un texto'
+            required_error: 'El nombre es obligatorio',
         })
-        .min(1, { message: 'El nombre no puede estar vacío' })
-        .max(100, { message: 'El nombre no puede superar 100 caracteres' }),
+        .min(1, 'El nombre no puede estar vacío')
+        .max(100, 'Máximo 100 caracteres')
+        .refine((val) => isNaN(Number(val)), {
+            message: 'El nombre de la categoría no puede ser solo números'
+        }),
 
     description: z
         .string({ invalid_type_error: 'La descripción debe ser un texto' })

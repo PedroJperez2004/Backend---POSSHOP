@@ -11,7 +11,6 @@ export class CategoryController {
                 ...req.body,
                 id_shop: req.user.id_shop
             }
-            console.log(req.body)
 
             const result = await this.categoryService.createCategory(req.body)
 
@@ -60,8 +59,7 @@ export class CategoryController {
             }
 
             const category = await this.categoryService.listCategoryById(id_shop, id)
-            console.log(category)
-            const result = await this.categoryService.updateCategory(category.id, data)
+            const result = await this.categoryService.updateCategory(id_shop, category.id, data)
             return res.status(200).json({
                 ok: true,
                 message: result
@@ -77,7 +75,7 @@ export class CategoryController {
             const { id } = req.params
             const category = await this.categoryService.listCategoryById(id_shop, id)
 
-            const result = await this.categoryService.desactivateCategory(category.id)
+            const result = await this.categoryService.desactivateCategory(id_shop, category.id)
 
             return res.status(200).json({
                 result: result
@@ -95,11 +93,31 @@ export class CategoryController {
             const { id } = req.params
 
             const category = await this.categoryService.listCategoryById(id_shop, id)
-            console.log(category.id)
-            const result = await this.categoryService.activateCategory(category.id)
+
+            const result = await this.categoryService.activateCategory(id_shop, category.id)
 
             return res.status(200).json({
                 result: result
+            })
+
+
+        } catch (error) {
+            return res.status(error.status || 500).json({ message: error.message })
+
+        }
+    }
+
+    async delete(req, res) {
+        try {
+            const id_shop = req.user.id_shop
+            const { id } = req.params
+
+            const category = await this.categoryService.listCategoryById(id_shop, id)
+
+            const result = await this.categoryService.delete(id_shop, category.id)
+
+            return res.status(200).json({
+                result
             })
 
 

@@ -1,26 +1,83 @@
 import { ProductRepository } from "../repository/product.repository.js"
+import { SaleItemRepository } from "../../sales/repository/sale.item.repository.js";
+import { CategoryRepository } from "../repository/category.repository.js";
 import { deleteImages } from "../../../utils/deleteImages.js";
+import { TaxService } from "./tax.service.js";
+import { saveImages } from "../../../utils/saveImages.js";
+
 export class ProductService {
-    async create(data, dataFiles) {
+
+    constructor() {
+        this.taxService = new TaxService()
+    }
+
+
+    async create(files, body, id_shop) {
         try {
+            const category = await CategoryRepository.listCategoryById(id_shop, body.id_category)
+            if (category.active !== true) {
+                throw new Error('Categoría inactiva, seleccione otra')
+            }
+            if (!files || files.length === 0) {
+                throw new Error('Debe agregar al menos una imagen ')
+            }
+            if (files.length > 1) {
+                throw new Error('Máximo 1 imagen')
+            }
+
+            const images = await saveImages(files, 'products');
+            if (!body.stock) {
+                body.stock = 0
+            }
+            const data = {
+                ...body, id_shop: id_shop, id_category: category.id
+            }
+
+            const dataFiles = {
+                images, alt_text: body.alt_text
+            }
+
+
+
+            await this.taxService.listTaxesById(data.id_shop, data.id_tax)
             const result = await ProductRepository.create(data, dataFiles.images)
             return { message: 'Creacion de producto exitosa', result: result }
-
         } catch (error) {
             throw error
         }
 
     }
 
-    async updateProduct(id, data) {
+    async updateProduct(id_shop, id, data, files) {
         try {
-            const result = await ProductRepository.updateProduct(id, data)
-            return result
+            // 1. Solo procesamos imágenes si se subieron archivos nuevos (files existe y tiene contenido)
+            if (files && files.length > 0) {
+                const newImages = await saveImages(files, 'products');
+
+                if (newImages) {
+                    // Obtenemos las imágenes actuales antes de borrarlas
+                    const currentImages = await ProductRepository.getProductImages(id_shop, id);
+
+                    // Borramos los archivos físicos viejos solo porque hay nuevos
+                    if (currentImages && currentImages.length > 0) {
+                        deleteImages(currentImages.map(img => img.url));
+                    }
+
+                    // Actualizamos la base de datos con las nuevas rutas
+                    const [affectedRows] = await ProductRepository.updateImage(id_shop, id, newImages);
+                    if (affectedRows === 0) {
+                        await ProductRepository.createImage(id_shop, id, newImages);
+                    }
+                }
+            }
+
+            // 2. Actualizamos el resto de los datos (como el STOCK)
+            const result = await ProductRepository.updateProduct(id_shop, id, data);
+            return result;
         } catch (error) {
-            throw error
+            throw error;
         }
     }
-
     async listProductsByCategory(id_shop, id_category) {
         try {
             const result = await ProductRepository.listProductsByCategory(id_shop, id_category)
@@ -81,11 +138,10 @@ export class ProductService {
         }
 
     }
-    async desactivateProduct(id) {
+    async desactivateProduct(id_shop, id) {
         try {
-            const result = await ProductRepository.desactivateProduct(id)
+            const result = await ProductRepository.desactivateProduct(id_shop, id)
             const [filasAfectadas] = result
-            console.log(filasAfectadas)
             if (filasAfectadas === 0) {
                 return { message: "El producto ya estaba desactivado" }
             }
@@ -96,12 +152,10 @@ export class ProductService {
         }
 
     }
-    async activateProduct(id) {
+    async activateProduct(id_shop, id) {
         try {
-            const result = await ProductRepository.activateProduct(id)
-            console.log(result)
+            const result = await ProductRepository.activateProduct(id_shop, id)
             const [filasAfectadas] = result
-            console.log(filasAfectadas)
             if (filasAfectadas === 0) {
                 return { message: "El producto ya estaba activado" }
             }
@@ -115,11 +169,19 @@ export class ProductService {
 
     async deleteProduct(id_shop, id) {
         try {
+            const sales = await SaleItemRepository.getSalesItemsByProduct(id_shop, id)
+
+            if (sales.length > 0) {
+                const error = new Error
+                error.status = 400
+                error.message = 'El producto seleccionado tiene ventas asociadas, no es posible eliminarlo'
+                throw error
+            }
+
             const result = await ProductRepository.deleteProduct(id_shop, id)
-            console.log(result)
-            console.log(typeof result)
             deleteImages(result)
             return { message: 'Producto eliminado correctamente' }
+
         } catch (error) {
             throw error
         }
@@ -137,6 +199,17 @@ export class ProductService {
             return result
 
         } catch (error) {
+            throw error
+        }
+    }
+
+    async listProductsByTax(id_shop, id_tax) {
+        try {
+            await this.taxService.listTaxesById(id_shop, id_tax)
+            const result = await ProductRepository.listProductsByTax(id_shop, id_tax)
+            return result
+        }
+        catch (error) {
             throw error
         }
     }

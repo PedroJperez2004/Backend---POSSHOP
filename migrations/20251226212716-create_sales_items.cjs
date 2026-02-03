@@ -41,6 +41,15 @@ module.exports = {
           type: Sequelize.DECIMAL(10, 2),
           allowNull: false
         },
+        tax_amount: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: false
+        },
+        id_tax: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: { model: 'taxes', key: 'id' }
+        },
 
         id_shop: {
           type: Sequelize.INTEGER,

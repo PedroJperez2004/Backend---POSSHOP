@@ -13,6 +13,7 @@ Product.init(
         id_category: { type: DataTypes.INTEGER, allowNull: true },
         id_shop: { type: DataTypes.INTEGER, allowNull: false },
         active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+        id_tax: { type: DataTypes.INTEGER, allowNull: false }
     },
     {
         sequelize,
@@ -28,6 +29,7 @@ Product.associate = (models) => {
     Product.hasMany(models.Inventory, { foreignKey: 'product_id', as: 'inventory' });
     Product.hasMany(models.SaleItem, { foreignKey: 'product_id', as: 'saleItems' });
     Product.hasMany(models.ProductImage, { foreignKey: 'product_id', as: 'images' });
+    Product.belongsTo(models.Tax, { foreignKey: 'id_tax', as: 'tax' });
 };
 
 export default Product;

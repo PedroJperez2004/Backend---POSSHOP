@@ -12,7 +12,7 @@ module.exports = {
         userName: 'PedroJPerez',
         firstName: 'Pedro',
         lastName: 'Perez',
-        email: 'pedro@gmail.comm',
+        email: 'pedro@gmail.com',
         phone: '555-1000',
         password: hashedPassword,
         role: 'admin',

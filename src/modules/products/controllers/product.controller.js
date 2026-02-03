@@ -9,27 +9,10 @@ export class ProductController {
 
     async createProduct(req, res) {
         try {
-            if (!req.files || req.files.length === 0) {
-                throw new Error('Debe agregar al menos una imagen ')
-            }
-            if (req.files.length > 5) {
-                throw new Error('Máximo 5 imagenes')
-            }
-            const images = await saveImages(req.files, 'products');
 
-            const category = await this.categoryService.listCategoryById(req.user.id_shop, req.body.id_category)
-            if (category.active !== true) {
-                throw new Error('Categoría inactiva, seleccione otra')
-            }
+            const { id_shop } = req.user
 
-            const data = {
-                ...req.body, id_shop: req.user.id_shop, id_category: category.id
-            }
-            const dataFiles = {
-                images, alt_text: req.body.alt_text
-            }
-
-            const result = await this.productService.create(data, dataFiles)
+            const result = await this.productService.create(req.files, req.body, id_shop)
             return res.status(200).json({ Ok: true, Message: 'Producto Creado correctamente', Product: result })
 
         } catch (error) {
@@ -42,11 +25,28 @@ export class ProductController {
         try {
             const { id } = req.params
             const { id_shop } = req.user
+
+            if (req.body.id_category) {
+                const category = await this.categoryService.listCategoryById(req.user.id_shop, req.body.id_category)
+                if (!category) {
+                    throw error
+                }
+                if (category.active !== true) {
+                    throw new Error('Categoría inactiva, seleccione otra')
+                }
+
+            }
+
+
+            if (req.files.length > 1) {
+                throw new Error('Máximo 1 imagen')
+            }
             const product = await this.productService.listProductById(id_shop, id)
             const data = {
                 ...req.body
             }
-            const result = await this.productService.updateProduct(product.id, data)
+
+            const result = await this.productService.updateProduct(id_shop, product.id, data, req.files)
             return res.status(200).json({ Ok: true, Product: result })
         } catch (error) {
             return res.status(500).json({ message: error.message })
@@ -58,12 +58,9 @@ export class ProductController {
     async listProductsByCategory(req, res) {
         try {
             const { id } = req.params
-            console.log('ID categoria: ', id)
 
-            const category = await this.categoryService.listCategoryById(req.user.id_shop, id)
-            if (category.active !== true) {
-                throw new Error('Categoría inactiva, seleccione otra')
-            }
+            await this.categoryService.listCategoryById(req.user.id_shop, id)
+
             const result = await this.productService.listProductsByCategory(req.user.id_shop, id)
             return res.status(200).json({ Ok: true, Products: result })
         } catch (error) {
@@ -122,7 +119,7 @@ export class ProductController {
 
             const product = await this.productService.listProductById(id_shop, id)
 
-            const result = await this.productService.desactivateProduct(product.id)
+            const result = await this.productService.desactivateProduct(id_shop, product.id)
 
             return res.status(200).json({
                 result: result
@@ -142,7 +139,7 @@ export class ProductController {
 
             const product = await this.productService.listProductById(id_shop, id)
 
-            const result = await this.productService.activateProduct(product.id)
+            const result = await this.productService.activateProduct(id_shop, product.id)
 
             return res.status(200).json({
                 result: result
@@ -159,10 +156,21 @@ export class ProductController {
         try {
 
             const product = await this.productService.listProductById(req.user.id_shop, req.params.id)
+
             const result = await this.productService.deleteProduct(req.user.id_shop, product.id)
             return res.status(200).json({
                 result: result
             })
+        } catch (error) {
+            return res.status(error.status || 500).json({ message: error.message })
+        }
+    }
+
+    async listProductsByTax(req, res) {
+        try {
+            const { id } = req.params
+            const result = await this.productService.listProductsByTax(req.user.id_shop, id)
+            return res.status(200).json({ Ok: true, Products: result })
         } catch (error) {
             return res.status(error.status || 500).json({ message: error.message })
         }

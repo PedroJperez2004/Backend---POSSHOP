@@ -15,6 +15,13 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
+      id_shop: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'shops', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       url: {
         type: Sequelize.STRING(255),
         allowNull: false
@@ -50,8 +57,6 @@ module.exports = {
       }
     });
 
-    // Opcional: índice para acceder rápido por producto
-    await queryInterface.addIndex('product_images', ['product_id']);
   },
 
   async down(queryInterface, Sequelize) {

@@ -59,13 +59,20 @@ export class SaleRepository {
     }
     static searchSaleById = async (id, id_shop, transaction = null) => {
 
-        return await models.Sale.findOne({
-            where: {
-                id,
-                id_shop
-            },
-            transaction: transaction || undefined
-        });
+        try {
+
+            return await models.Sale.findOne({
+                where: {
+                    id,
+                    id_shop
+                },
+                transaction: transaction || undefined
+            });
+        } catch (error) {
+
+            throw new Error('Error al obtener la venta: ' + error.message)
+
+        }
     }
 
 
@@ -128,6 +135,21 @@ export class SaleRepository {
         }
     };
     static getEmployeeSales = async (employeeId, id_shop) => {
+        try {
+            const sales = await models.Sale.findAll({
+                where: {
+                    user_id: employeeId,
+                    id_shop
+                },
+                order: [['createdAt', 'DESC']]
+            });
+            return sales;
+        } catch (error) {
+            throw new Error('Error al obtener las ventas del empleado: ' + error.message);
+        }
+    }
+
+    static getProductSales = async (employeeId, id_shop) => {
         try {
             const sales = await models.Sale.findAll({
                 where: {

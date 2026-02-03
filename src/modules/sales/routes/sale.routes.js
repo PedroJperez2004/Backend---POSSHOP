@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { SaleController } from "../controllers/sale.controller.js";
-import { authenticate, authorize, validate, validatePartial } from '../../../middlewares/index.js'
+import { authenticate, authorize, validate } from '../../../middlewares/index.js'
+import orderSchema from "../../../middlewares/validation/order.schema.js";
 
 export const salesRouter = Router();
 const saleController = new SaleController();
 
 
-salesRouter.post('/', authenticate, authorize('admin', 'employee'), (req, res) => {
+salesRouter.post('/', authenticate, authorize('admin', 'employee'), validate(orderSchema), (req, res) => {
     saleController.create(req, res);
 
 })
@@ -24,5 +25,8 @@ salesRouter.get('/:employeeId/list', authenticate, authorize('employee', 'admin'
     saleController.getEmployeeSales(req, res)
 
 })
+
+
+
 
 

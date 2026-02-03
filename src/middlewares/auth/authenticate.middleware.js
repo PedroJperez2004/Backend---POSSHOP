@@ -3,7 +3,6 @@ import { SECRET_JWT_KEY } from '../../config/auth_config.js'
 import { redis } from '../../config/redis.client.js'
 
 export async function authenticate(req, res, next) {
-    console.log('authenticate')
     const token = req.cookies.access_token
     if (!token) {
         return res.status(401).json({ message: 'No token' })
@@ -15,7 +14,6 @@ export async function authenticate(req, res, next) {
 
         // 2️⃣ Consultar Redis
         const redisToken = await redis.get(`user:${decoded.id}:token`)
-        console.log('REDIS GET KEY:', `user:${decoded.id}:token`);
 
         if (!redisToken) {
             return res.status(401).json({ message: 'Sesión expirada' })

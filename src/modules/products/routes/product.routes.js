@@ -2,6 +2,7 @@
 import Router from "express";
 import { authenticate, authorize, validate, validatePartial } from '../../../middlewares/index.js'
 import { productSchema } from "../../../middlewares/validation/product.schema.js";
+import { updateProductSchema } from "../../../middlewares/validation/update.product.shema.js";
 import { uploadFile } from "../../../middlewares/uploads/upload.middleware.js";
 import { ProductController } from "../controllers/product.controller.js";
 import { updateCategoryProductsSchema } from "../../../middlewares/validation/product.update.category.schema.js";
@@ -15,13 +16,15 @@ productRoutes.post('/create', uploadFile('products').array('images'), authentica
     productController.createProduct(req, res)
 })
 
-
-
 productRoutes.get('/:id/list-products-by-category', authenticate, authorize('admin', 'employee'), (req, res) => {
     productController.listProductsByCategory(req, res)
 })
 
-productRoutes.get('/list-products/', authenticate, authorize('admin', 'employee'), (req, res) => {
+productRoutes.get('/:id/list-products-by-tax', authenticate, authorize('admin', 'employee'), (req, res) => {
+    productController.listProductsByTax(req, res)
+})
+
+productRoutes.get('/list-products', authenticate, authorize('admin', 'employee'), (req, res) => {
     productController.listProducts(req, res)
 })
 
@@ -44,6 +47,6 @@ productRoutes.patch('/:id/activate', authenticate, authorize('admin'), (req, res
 productRoutes.delete('/:id/delete', authenticate, authorize('admin'), (req, res) => {
     productController.deleteProduct(req, res)
 })
-productRoutes.patch('/:id/update', authenticate, authorize('admin'), validatePartial(productSchema), (req, res) => {
+productRoutes.patch('/:id/update', uploadFile('products').array('images'), authenticate, authorize('admin'), validatePartial(updateProductSchema), (req, res) => {
     productController.updateProduct(req, res)
 })

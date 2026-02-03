@@ -24,3 +24,7 @@ categoryRoutes.patch('/:id/desactivate', authenticate, authorize('admin'), (req,
 categoryRoutes.patch('/:id/activate', authenticate, authorize('admin'), (req, res) => {
     categoryController.activateCategory(req, res)
 })
+
+categoryRoutes.delete('/:id/delete', authenticate, authorize('admin'), (req, res) => {
+    categoryController.delete(req, res)
+})

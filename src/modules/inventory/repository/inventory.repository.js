@@ -3,7 +3,7 @@ import sequelize from "../../../config/database.js";
 import { Op } from "sequelize";
 export class InventoryRepository {
 
-    static incrementInventory = async (product_id, quantity, type, note, id_shop, transaction = null) => {
+    static incrementInventory = async (user_id, product_id, quantity, type, note, id_shop, transaction = null) => {
         let localTransaction = false;
         try {
             if (!transaction) {
@@ -23,6 +23,7 @@ export class InventoryRepository {
 
             // 2️⃣ Registrar movimiento
             const inventory = await models.Inventory.create({
+                user_id,
                 product_id, quantity, type, note, id_shop
             }, { transaction }); //Usamos la transacción creada para agregar esta quiery a la misma sesión
 
@@ -41,7 +42,7 @@ export class InventoryRepository {
     };
 
 
-    static decrementInventory = async (product_id, quantity, type, note, id_shop, transaction = null) => {
+    static decrementInventory = async (user_id, product_id, quantity, type, note, id_shop, transaction = null) => {
         let localTransaction = false;
 
         try {
@@ -70,7 +71,7 @@ export class InventoryRepository {
 
             // 2️⃣ Registrar movimiento
             const inventory = await models.Inventory.create(
-                { product_id, quantity, type, note, id_shop },
+                { user_id, product_id, quantity, type, note, id_shop },
                 { transaction }
             );
 

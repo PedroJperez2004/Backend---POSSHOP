@@ -12,6 +12,7 @@ module.exports = {
       stock: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
       id_category: { type: Sequelize.INTEGER, allowNull: true, references: { model: 'categories', key: 'id' } },
       id_shop: { type: Sequelize.INTEGER, allowNull: false, references: { model: 'shops', key: 'id' } },
+      id_tax: { type: Sequelize.INTEGER, allowNull: true, references: { model: 'taxes', key: 'id' } },
       active: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
       createdAt: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW },
       updatedAt: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW },

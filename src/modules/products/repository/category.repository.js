@@ -1,16 +1,17 @@
 import models from '../../index.js'
 import { Op } from 'sequelize'
+
 export class CategoryRepository {
+    constructor() {
+        this.productService = new ProductService()
+    }
+
     static createCategory = async (name, description, id_shop, active) => {
 
         try {
             return await models.Category.create({ name, description, id_shop, active })
         } catch (error) {
-            console.log('NAME:', error.name);
-            console.log('MESSAGE:', error.message);
-            console.log('ERRORS:', error.errors);
-            console.log('PARENT:', error.parent);
-            console.log('ORIGINAL:', error.original);
+           
             throw new Error(`Error al crear la categoría: ${error.message}`)
         }
 
@@ -44,15 +45,15 @@ export class CategoryRepository {
         }
 
     }
-    static updateCategory = async (id, data) => {
-
+    static updateCategory = async (id_shop, id, data) => {
         try {
             await models.Category.update(
                 data
                 , {
                     where: {
                         id: id
-                    }
+                    },
+                    id_shop: id_shop
 
                 })
             return await models.Category.findByPk(id)
@@ -63,7 +64,7 @@ export class CategoryRepository {
         }
     }
 
-    static desactivateCategory = async (id) => {
+    static desactivateCategory = async (id_shop, id) => {
         try {
 
             return await models.Category.update(
@@ -73,7 +74,8 @@ export class CategoryRepository {
                         id: id,
                         active: {
                             [Op.ne]: false
-                        }
+                        },
+                        id_shop: id_shop
                     }
                 }
 
@@ -84,10 +86,9 @@ export class CategoryRepository {
 
         }
     }
-    static activateCategory = async (id) => {
+    static activateCategory = async (id_shop, id) => {
         try {
-            console.log(id)
-            console.log(typeof id)
+         
 
             return await models.Category.update(
                 { active: true },
@@ -96,7 +97,7 @@ export class CategoryRepository {
                         id: id,
                         active: {
                             [Op.ne]: true
-                        }
+                        }, id_shop: id_shop
                     }
                 }
 
@@ -108,5 +109,20 @@ export class CategoryRepository {
         }
     }
 
-    
+    static delete = async (id_shop, id) => {
+
+        try {
+            return await models.Category.destroy({
+                where: {
+                    id: id,
+                    id_shop: id_shop
+                }
+            })
+        } catch (error) {
+            throw new Error(error.message)
+
+        }
+    }
+
+
 }

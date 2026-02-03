@@ -4,13 +4,14 @@ export class ProductRepository {
 
     static create = async (data, url) => {
         try {
-            const { name, description, price, stock, id_category, alt_text, id_shop } = data
+            const { name, description, price, stock, id_category, alt_text, id_shop, id_tax } = data
 
             const productCreated = await models.Product.create({
-                name: name, description: description, price: price, stock: stock, id_category: id_category, id_shop: id_shop
+                name, description, price, stock, id_category, id_shop, id_tax
             })
             const imagesToCreate = url.map((img, index) => ({
                 product_id: productCreated.id,
+                id_shop: productCreated.id_shop,
                 url: img,
                 alt_text: alt_text,
                 order: index + 1,
@@ -18,7 +19,6 @@ export class ProductRepository {
 
             }))
             await models.ProductImage.bulkCreate(imagesToCreate)
-
 
             const productWithImages = await models.Product.findByPk(productCreated.id, {
                 include: 'images'
@@ -32,10 +32,13 @@ export class ProductRepository {
         }
     };
 
-    static updateProduct = async (id, data) => {
+    static updateProduct = async (id_shop, id, data) => {
         try {
             return await models.Product.update(data, {
-                where: { id }
+                where: {
+                    id,
+                    id_shop
+                }
             });
 
         } catch (error) {
@@ -127,7 +130,7 @@ export class ProductRepository {
         }
 
     }
-    static desactivateProduct = async (id) => {
+    static desactivateProduct = async (id_shop, id) => {
         try {
 
             return await models.Product.update(
@@ -137,7 +140,8 @@ export class ProductRepository {
                         id: id,
                         active: {
                             [Op.ne]: false
-                        }
+                        },
+                        id_shop: id_shop
                     }
                 }
 
@@ -148,7 +152,7 @@ export class ProductRepository {
 
         }
     }
-    static activateProduct = async (id) => {
+    static activateProduct = async (id_shop, id) => {
         try {
 
             return await models.Product.update(
@@ -158,7 +162,8 @@ export class ProductRepository {
                         id: id,
                         active: {
                             [Op.ne]: true
-                        }
+                        },
+                        id_shop: id_shop
                     }
                 }
 
@@ -203,4 +208,69 @@ export class ProductRepository {
             return { message: error.message }
         }
     }
+
+
+    static updateImage = async (id_shop, id, url) => {
+        try {
+            return await models.ProductImage.update({
+                url: url[0],
+                isMain: true,
+                order: 1
+            }, {
+                where: {
+                    product_id: id,
+                    id_shop: id_shop
+                }
+            })
+        } catch (error) {
+            throw new Error(error.message)
+
+        }
+    }
+
+    static createImage = async (id_shop, id, url) => {
+        try {
+            return await models.ProductImage.create({
+                id_shop: id_shop,
+                product_id: id,
+                url: url[0],
+                isMain: true,
+                order: 1
+            })
+
+        } catch (error) {
+            throw new Error(error.message)
+
+        }
+    }
+
+    static getProductImages = async (id_shop, id) => {
+        try {
+
+            return await models.ProductImage.findAll({
+                where: {
+                    product_id: id,
+                    id_shop: id_shop
+                },
+                attributes: ['url']
+            })
+
+        } catch (error) {
+            throw new Error
+        }
+    }
+
+    static listProductsByTax = async (id_shop, id_tax) => {
+        try {
+            return await models.Product.findAll({
+                where: {
+                    id_shop: id_shop,
+                    id_tax: id_tax
+                }
+            })
+        } catch (error) {
+            throw new Error('Error al obtener los productos de la categoría: ', error.message)
+        }
+    }
+
 }

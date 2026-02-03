@@ -4,7 +4,6 @@ import sequelize from '../../../config/database.js';
 
 import { UserService } from "../../user/services/user.services.js";
 import { SaleRepository } from "../repository/sale.repository.js"
-
 export class SaleService {
     constructor() {
         this.saleItemService = new SaleItemService()
@@ -23,16 +22,29 @@ export class SaleService {
             );
 
 
+
             const productMap = new Map(
                 products.map(p => [p.dataValues.id, p.dataValues])
             );
 
             const stockInsufccient = [];
+            const productInactives = [];
+
             for (const item of data.products) {
                 const product = productMap.get(item.product_id);
                 if (item.quantity > product.stock) {
                     stockInsufccient.push(item.product_id);
                 }
+                if (!product.active) {
+                    productInactives.push(item.product_id);
+                }
+            }
+            if (productInactives.length > 0) {
+                const error = new Error(
+                    `Los siguientes productos no están activos: ${productInactives.join(', ')}`
+                );
+                error.status = 400;
+                throw error;
             }
 
             if (stockInsufccient.length > 0) {
@@ -53,21 +65,31 @@ export class SaleService {
                 transaction
             );
 
-
             const salesItems = await this.saleItemService.createSaleItem(
+                user_id,
                 data.products,
                 products,
                 saleCreated.id,
                 id_shop,
                 transaction
             );
+
+
             const status = 'completed'
-            const total = salesItems.reduce((acc, item) => acc + item.subtotal, 0);
+            const subtotal = salesItems.reduce((acc, item) => acc + item.subtotal, 0);
+            const tax_amount = salesItems.reduce((acc, item) => acc + item.tax_amount, 0);
+            const total = subtotal + tax_amount;
             const saleUpdated = await SaleRepository.updateSaleforItems(saleCreated.id, total, status, id_shop, transaction);
 
 
             await transaction.commit();
-            return { ok: true, sale: saleUpdated, items: salesItems };
+            return {
+                ok: true, result: {
+                    sale: saleUpdated,
+                    items: salesItems
+
+                }
+            };
 
         } catch (error) {
             await transaction.rollback();
@@ -137,6 +159,8 @@ export class SaleService {
                     quantity: item.dataValues.quantity,
                     price: item.dataValues.price,
                     subtotal: item.dataValues.subtotal,
+                    tax_amount: item.dataValues.tax_amount,
+                    id_tax: item.dataValues.id_tax,
                     reverse_sale_id: reverse_sale_id,
                     id_shop: id_shop,
 
@@ -145,6 +169,7 @@ export class SaleService {
             }
 
             const saleItems = await this.saleItemService.createReverseSaleItem(
+                user_id,
                 products, transaction
             );
 
@@ -164,21 +189,7 @@ export class SaleService {
         }
 
     }
-    // async getAll(id_shop, status, from, to) {
-    //     try {
-    //         console.log('FROM: ', from, 'TO:', to);
-    //         const data = { id_shop }
 
-    //         if (status) {
-    //             data.status = status
-    //         }
-    //         const sales = await SaleRepository.getAll(data)
-
-    //         return sales
-    //     } catch (error) {
-    //         throw error
-    //     }
-    // }
 
     async getAll(id_shop, status, from, to) {
         try {
@@ -220,5 +231,7 @@ export class SaleService {
             throw error
         }
     }
+
+
 
 }
