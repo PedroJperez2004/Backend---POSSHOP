@@ -18,14 +18,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config()
 const app = express()
-// 🔹 Ocultar que usamos Express
+
+
 app.disable('x-powered-by');
 app.use(json())
 app.use(cookieParser())
 app.use(cors)
 
-//Servir archivos estáticos desde la carpeta "storage"
-// Al estar en src/app.js, subimos un nivel para encontrar 'storage'
+
 app.use('/storage', express.static(path.resolve(__dirname, '..', 'storage')));
 
 app.use('/users', userRoutes)
