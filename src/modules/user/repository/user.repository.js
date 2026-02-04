@@ -110,20 +110,23 @@ export class UserRepository {
     }
     static update = async (id, data) => {
         try {
-            await User.update(
-                data
-                , {
-                    where: {
-                        id: id
-                    }
+            // Actualiza el usuario
+            await User.update(data, {
+                where: { id: id }
+            });
 
-                })
-            return await User.findByPk(id)
+            // Devuelve el usuario actualizado sin el password
+            const updatedUser = await User.findByPk(id, {
+                attributes: { exclude: ['password'] }
+            });
+
+            return updatedUser;
 
         } catch (error) {
-            throw new Error('Error al actualizar el usuario')
-
+            console.error(error); // útil para debug
+            throw new Error('Error al actualizar el usuario');
         }
-    }
+    };
+
 
 }

@@ -28,7 +28,8 @@ import cors from 'cors';
 // Definimos los orígenes permitidos
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://frontend-posshop.vercel.app' // Asegúrate de que esta sea tu URL real de Vercel
+    'https://frontend-posshop.vercel.app', // Asegúrate de que esta sea tu URL real de Vercel
+    'https://frontend-posshop-ajg3lchep-pedrojperez2004s-projects.vercel.app'
 ];
 
 export default cors({

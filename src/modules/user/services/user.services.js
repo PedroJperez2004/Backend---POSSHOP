@@ -158,6 +158,12 @@ export class UserService {
     }
     async update(id, data) {
         try {
+            console.log('DATA: ', data)
+
+            if (data.password) {
+                const hashPassword = await bcrypt.hash(data.password, Number(SALT_ROUNDS))
+                data.password = hashPassword
+            }
             const result = await UserRepository.update(id, data)
             return { User: result }
         } catch (error) {
