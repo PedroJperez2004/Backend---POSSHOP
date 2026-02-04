@@ -4,6 +4,14 @@ API RESTful que sirve como el núcleo del sistema de Punto de Venta (POS) **POSS
 
 ---
 
+## 🚧 Estado del Proyecto
+
+**Este proyecto se encuentra en desarrollo activo.** La versión desplegada actualmente es un **MVP (Producto Mínimo Viable)** funcional que demuestra la arquitectura central y las funcionalidades clave. El roadmap incluye la implementación de nuevas características y la mejora continua de la base de código.
+
+La interfaz de usuario (frontend) asociada está en esta misma fase de desarrollo y, en su estado actual, se encuentra optimizada para una experiencia de escritorio. La adaptabilidad para dispositivos móviles es una de las próximas prioridades del proyecto global.
+
+---
+
 ## 🎯 Funcionalidades Principales
 
 Este backend gestiona toda la lógica de negocio y la persistencia de datos para la aplicación:
