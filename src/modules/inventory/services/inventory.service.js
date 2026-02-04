@@ -1,7 +1,7 @@
 import { InventoryRepository } from '../repository/inventory.repository.js'
 export class InventoryService {
     async createMovement(user_id, product_id, quantity, type, note, id_shop, transaction = null) {
-        {
+        {                
             try {
                 if (quantity <= 0) {
                     throw new Error('La cantidad debe ser mayor a 0');

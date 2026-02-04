@@ -4,7 +4,7 @@ import { CategoryRepository } from "../repository/category.repository.js";
 import { deleteImages } from "../../../utils/deleteImages.js";
 import { TaxService } from "./tax.service.js";
 import { saveImages } from "../../../utils/saveImages.js";
-
+import { InventoryService } from "../../inventory/services/inventory.service.js";
 import { deleteImagesToCloudinary } from "../../../utils/deleteToCloudinary.js";
 
 
@@ -14,10 +14,11 @@ export class ProductService {
 
     constructor() {
         this.taxService = new TaxService()
+        this.inventoryService = new InventoryService()
     }
 
 
-    async create(files, body, id_shop) {
+    async create(files, body, id_shop, user_id) {
         try {
             const category = await CategoryRepository.listCategoryById(id_shop, body.id_category)
             if (category.active !== true) {
@@ -42,11 +43,10 @@ export class ProductService {
             }
 
 
-            console.log('IMAGENES', images)
 
 
 
-            if (!body.stock) {
+            if (!body.stock || body.stock <= 0) {
                 body.stock = 0
             }
             const data = {
@@ -59,8 +59,20 @@ export class ProductService {
 
 
 
-            await this.taxService.listTaxesById(data.id_shop, data.id_tax)
+            await this.taxService.listTaxesById(id_shop, data.id_tax)
             const result = await ProductRepository.create(data, dataFiles.images)
+
+            if (result.dataValues.stock > 0) {
+                const { id, stock, name } = result.dataValues
+                const product_id = id
+                const quantity = stock
+                const type = `in`
+                const note = `Creacion del producto ${name}`
+                await this.inventoryService.createMovement(user_id, product_id, quantity, type, note, id_shop)
+            }
+
+
+
             return { message: 'Creacion de producto exitosa', result: result }
         } catch (error) {
             throw error

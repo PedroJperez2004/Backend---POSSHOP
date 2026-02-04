@@ -10,9 +10,9 @@ export class ProductController {
     async createProduct(req, res) {
         try {
 
-            const { id_shop } = req.user
+            const { id_shop, id } = req.user
 
-            const result = await this.productService.create(req.files, req.body, id_shop)
+            const result = await this.productService.create(req.files, req.body, id_shop, id)
             return res.status(200).json({ Ok: true, Message: 'Producto Creado correctamente', Product: result })
 
         } catch (error) {
