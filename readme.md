@@ -1,141 +1,66 @@
-# POSSHOP - Backend
+# 🛍️ POSSHOP - Backend API
 
-Backend para un sistema de Punto de Venta (POS) construido con Node.js, Express y Sequelize.
+API RESTful que sirve como el núcleo del sistema de Punto de Venta (POS) **POSSHOP**. Este proyecto está diseñado y desplegado con un enfoque en escalabilidad, rendimiento y mantenibilidad, utilizando un stack de tecnologías modernas.
 
-## Descripción
+---
 
-Este proyecto proporciona la API backend para un sistema POS. Gestiona productos, inventario, ventas, usuarios y autenticación. Utiliza una base de datos MySQL para el almacenamiento de datos principal y Redis para la gestión de sesiones o caché.
+## 🎯 Funcionalidades Principales
 
-## Características
+Este backend gestiona toda la lógica de negocio y la persistencia de datos para la aplicación:
 
--   Gestión de productos (CRUD)
--   Gestión de categorías e impuestos
--   Gestión de inventario
--   Registro de ventas
--   Autenticación de usuarios y autorización (JWT)
--   Carga de imágenes de productos
--   Validación de datos de entrada
+-   👤 **Módulo de Autenticación y Usuarios:**
+    -   Registro y login de usuarios.
+    -   Autenticación basada en **JSON Web Tokens (JWT)** para proteger las rutas.
+    -   Refresh tokens para una gestión de sesión segura y persistente.
 
-## Tech Stack y Dependencias Principales
+-   📦 **Gestión de Inventario:**
+    -   CRUD completo para Productos.
+    -   Administración de Categorías de productos e Impuestos aplicables.
+    -   Lógica para el control de stock.
 
-El comando `npm install` instalará todas las dependencias necesarias del archivo `package.json`. Las tecnologías y librerías clave incluyen:
+-   📈 **Módulo de Ventas:**
+    -   Creación y registro de transacciones de venta.
+    -   Generación de reportes de ventas (futura implementación).
 
--   **Entorno de Ejecución**: [Node.js](https://nodejs.org/)
--   **Framework Web**: [Express.js](https://expressjs.com/) (`express`)
--   **ORM (Object-Relational Mapping)**: [Sequelize](https://sequelize.org/) (`sequelize`) para la interacción con la base de datos.
-    -   **CLI de Sequelize**: `sequelize-cli` para migraciones y seeders.
-    -   **Driver de MySQL**: `mysql2`
--   **Base de Datos**: [MySQL](https://www.mysql.com/), gestionada a través de Docker.
--   **Base de Datos en Memoria**: [Redis](https://redis.io/) (`redis`), para caché o sesiones, gestionada a través de Docker.
--   **Autenticación**: [JSON Web Tokens](https://jwt.io/) (`jsonwebtoken`) para proteger las rutas.
-    -   **Encriptación de Contraseñas**: `bcrypt` para el hashing seguro de contraseñas.
--   **Validación de Datos**: [Zod](https://zod.dev/) (`zod`) para asegurar la integridad de los datos de entrada.
--   **Carga de Archivos**: [Multer](https://github.com/expressjs/multer) (`multer`) para manejar la carga de imágenes.
--   **Variables de Entorno**: `dotenv` para gestionar la configuración.
--   **CORS**: `cors` para habilitar el Cross-Origin Resource Sharing.
--   **Herramientas de Desarrollo**:
-    -   `nodemon`: Para reiniciar automáticamente el servidor durante el desarrollo.
--   **Contenerización**: [Docker](https://www.docker.com/) para gestionar los servicios de la base de datos.
+-   🖼️ **Gestión de Medios:**
+    -   Subida de imágenes de productos desacoplada del servidor, gestionada enteramente por un servicio externo.
 
-## Prerrequisitos
+---
 
-Asegúrate de tener instalados los siguientes programas en tu sistema:
+## 🏗️ Arquitectura y Despliegue en Producción
 
--   [Node.js](https://nodejs.org/) (versión 18 o superior)
--   [Docker](https://www.docker.com/get-started) y Docker Compose
+El proyecto está construido pensando en un entorno de producción real, separando las responsabilidades y utilizando servicios gestionados para optimizar el rendimiento y la disponibilidad.
 
-## Instalación y Configuración
+-   **Hosting del Backend:**
+    -   La API está alojada en **Render**. El código fuente está sincronizado desde un repositorio de GitHub.
+    -   El despliegue de nuevas versiones se realiza de forma **manual** desde el panel de control de Render. Este método se utiliza para tener un control estricto sobre las actualizaciones que llegan a producción, permitiendo una validación final antes de cada lanzamiento.
 
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone https://github.com/PedroJperez2004/Backend---POSSHOP.git
-    cd Backend---POSSHOP
-    ```
+-   **Base de Datos:**
+    -   Utiliza **Aiven** para hospedar una base de datos **MySQL gestionada**. Esto elimina la necesidad de administrar la infraestructura de la base de datos y garantiza alta disponibilidad y backups automáticos.
 
-2.  **Instalar dependencias:**
-    ```bash
-    npm install
-    ```
+-   **Caché en Memoria:**
+    -   Implementa **Redis** a través de **Upstash** como servicio de caché. Se utiliza para almacenar en caché respuestas de API frecuentes, reduciendo la latencia y la carga sobre la base de datos principal.
 
-3.  **Configurar variables de entorno:**
-    Crea un archivo `.env` en la raíz del proyecto y añade las siguientes variables. 
+-   **Almacenamiento de Imágenes:**
+    -   La subida de imágenes de productos se maneja con **Cloudinary**. Las imágenes se envían directamente desde el cliente o a través del servidor al servicio de Cloudinary, evitando almacenar archivos en el sistema de ficheros del contenedor de Render. Esto mejora la escalabilidad y velocidad de entrega de contenido.
 
-    ```env
-    DB_HOST=localhost
-    DB_NAME=posshop
-    DB_USER=root
-    DB_PASS=root
-    PORT=3000
-    ```
+---
 
-4.  **Iniciar los servicios de base de datos con Docker:**
-    Este comando utilizará el archivo `docker-compose.yml` para iniciar los contenedores de MySQL y Redis.
-    ```bash
-    npm run docker
-    # O directamente con docker-compose
-    # docker-compose up -d
-    ```
+## 💻 Pila Tecnológica (Stack)
 
-5.  **Ejecutar las migraciones de la base de datos:**
-    Esto creará la estructura de tablas en tu base de datos `posshop`.
-    ```bash
-    npx sequelize-cli db:migrate
-    ```
+| Componente | Tecnología | Razón de la Elección |
+| :--- | :--- | :--- |
+| 🟢 **Runtime** | **Node.js** | Entorno de ejecución asíncrono y de alto rendimiento para APIs. |
+| ⚫ **Framework** | **Express.js** | Framework minimalista y robusto para la creación de APIs en Node.js. |
+| 🗃️ **Base de Datos** | **Aiven for MySQL** | Servicio de base de datos gestionada que provee una instancia de MySQL robusta, escalable y con backups automatizados. |
+| 🐘 **ORM** | **Sequelize** | ORM maduro que facilita la interacción con la base de datos SQL. |
+| ⚡ **Caché** | **Upstash (Redis)** | Redis como servicio (serverless) para una caché rápida y de baja latencia sin gestión de servidores. |
+| ☁️ **Imágenes** | **Cloudinary**| Plataforma líder para la gestión de medios que optimiza y distribuye imágenes globalmente (CDN). |
+| 🔐 **Seguridad** | **JWT & bcrypt** | Estándares de la industria para la autenticación y el hashing seguro de contraseñas. |
+| 📜 **Validación** | **Zod** | Validación de esquemas con inferencia de tipos estáticos, asegurando la integridad de los datos. |
 
-6.  **(Opcional) Ejecutar los seeders:**
-    Esto poblará la base de datos con datos de prueba.(Solo la tienda inicial, y el usuario Admin Inicial)
-    ```bash
-    npx sequelize-cli db:seed:all
-    ```
+---
 
-## Ejecutando la Aplicación
+## 📄 Licencia
 
-Para iniciar el servidor en modo de desarrollo (con recarga automática), ejecuta:
-```bash
-npm run dev
-```
-El servidor estará disponible en `http://localhost:3000` (o el puerto que hayas configurado en el archivo `.env`).
-
-## Scripts Disponibles
-
--   `npm run dev`: Inicia el servidor de desarrollo con `nodemon`.
--   `npm run docker`: Inicia los contenedores de Docker para Redis y MySQL definidos en `docker-compose.yml`.
--   `npm test`: (Actualmente no configurado) Ejecuta los tests.
-
-## API Endpoints
-
-La API está estructurada en módulos. Los principales puntos de entrada son:
-
--   `/auth`: Endpoints para login y manejo de tokens.
--   `/users`: Endpoints para la gestión de usuarios.
--   `/products`: Endpoints para productos (CRUD).
--   `/category`: Endpoints para categorías de productos.
--   `/taxes`: Endpoints para impuestos.
--   `/inventory`: Endpoints para la gestión de inventario.
--   `/sales`: Endpoints para el registro de ventas.
--   `/sale-items`: Endpoints para los ítems de una venta.
--   `/storage`: Sirve archivos estáticos (imágenes de productos).
-
-## Estructura del Proyecto
-
-El proyecto sigue una arquitectura modular para separar las responsabilidades:
-
-```
-src/
-├── app.js               # Configuración principal de Express y montaje de rutas
-├── server.js            # Punto de entrada, inicia el servidor HTTP
-├── config/              # Configuraciones (database, auth)
-├── middlewares/         # Middlewares personalizados (auth, cors, validation)
-├── modules/             # Lógica de negocio, dividida por módulos
-│   ├── products/
-│   │   ├── controllers/ # Controladores (manejan request/response)
-│   │   ├── models/      # Modelos de Sequelize
-│   │   ├── repository/  # Lógica de acceso a datos
-│   │   ├── routes/      # Definición de rutas
-│   │   └── services/    # Lógica de negocio
-│   └── ... (otros módulos como users, sales, etc.)
-├── utils/               # Funciones de utilidad
-storage/                 # Directorio para archivos subidos (imágenes)
-migrations/              # Migraciones de Sequelize
-seeders/                 # Seeders de Sequelize
-```
+Este proyecto es de mi propiedad y sirve como demostración de mis habilidades.
