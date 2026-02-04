@@ -45,6 +45,8 @@ El proyecto está construido pensando en un entorno de producción real, separan
 
 -   **Base de Datos:**
     -   Utiliza **Aiven** para hospedar una base de datos **MySQL gestionada**. Esto elimina la necesidad de administrar la infraestructura de la base de datos y garantiza alta disponibilidad y backups automáticos.
+    📄 [Ver Diagrama de la Base de Datos PDF](docs/DiagramaDatabase.pdf)
+
 
 -   **Caché en Memoria:**
     -   Implementa **Redis** a través de **Upstash** como servicio de caché. Se utiliza para almacenar en caché respuestas de API frecuentes, reduciendo la latencia y la carga sobre la base de datos principal.
