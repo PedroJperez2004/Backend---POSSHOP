@@ -72,7 +72,6 @@ export class UserService {
     }
 
     async register(userData) {
-        console.log('USERDADTAA": ', userData)
 
         const { userName, firstName, lastName, email, phone, password, role, id_shop, active } = userData
         const hashPassword = await bcrypt.hash(password, Number(SALT_ROUNDS))
@@ -158,7 +157,6 @@ export class UserService {
     }
     async update(id, data) {
         try {
-            console.log('DATA: ', data)
 
             if (data.password) {
                 const hashPassword = await bcrypt.hash(data.password, Number(SALT_ROUNDS))

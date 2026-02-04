@@ -34,7 +34,6 @@ export class ProductService {
             // const images = await saveImages(files, 'products');
 
 
-            console.log('FILLEEESSS', files)
             // --- Subida a Cloudinary solo si todo pasa ---
             const images = [];
             for (const file of files) {
@@ -220,7 +219,6 @@ export class ProductService {
             }
 
             const result = await ProductRepository.deleteProduct(id_shop, id)
-            console.log('RESULLTTl: ', result)
 
             if (result && result.length > 0) {
                 // IMPORTANTE: Usa await porque es una petición de red a Cloudinary
