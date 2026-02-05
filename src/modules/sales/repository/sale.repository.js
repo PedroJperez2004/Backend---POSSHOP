@@ -3,26 +3,6 @@ import sequelize from "../../../config/database.js"
 import { Op, where } from "sequelize"
 export class SaleRepository {
 
-    // static countTodayforSales = async (yyyy, mm, dd, transaction = null) => {
-    //     try {
-    //         // Buscar la última venta del día
-    //         const lastSale = await models.Sale.findOne({
-    //             where: {
-    //                 createdAt: {
-    //                     [Op.gte]: new Date(`${yyyy}-${mm}-${dd} 00:00:00`),
-    //                     [Op.lte]: new Date(`${yyyy}-${mm}-${dd} 23:59:59`)
-    //                 }
-    //             },
-    //             order: [['createdAt', 'DESC']],
-    //             transaction: transaction || undefined
-    //         });
-    //         return lastSale
-
-    //     } catch (error) {
-    //         throw new Error('Error al obtener el ultimo día: ' + error.message)
-    //     }
-    // }
-
 
     static create = async (user_id, sale_number, payment_method, id_shop, transaction = null, reverse_sale_id = null) => {
         try {

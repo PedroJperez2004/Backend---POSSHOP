@@ -15,32 +15,6 @@ export const productRoutes = Router()
 
 const productController = new ProductController()
 
-
-// productRoutes.post('/create', uploadFile('products').array('images'), authenticate, authorize('admin'), validate(productSchema), (req, res) => {
-//     productController.createProduct(req, res)
-// })
-
-// productRoutes.post(
-//     '/create',
-//     uploadFile().array('images'),  // imágenes quedan en memoria
-//     authenticate,
-//     authorize('admin'),
-//     validate(productSchema),
-//     productController.createProduct
-// );
-
-
-// productRoutes.post(
-//     '/create',
-//     parser.array('images'),  // Multer + Cloudinary
-//     authenticate,
-//     authorize('admin'),
-//     validate(productSchema),
-//     (req, res) => {
-//         productController.createProduct(req, res);
-//     }
-// );
-
 productRoutes.post(
     '/create',
     // Manejador de errores de Multer
@@ -96,15 +70,8 @@ productRoutes.patch('/:id/activate', authenticate, authorize('admin'), (req, res
 productRoutes.delete('/:id/delete', authenticate, authorize('admin'), (req, res) => {
     productController.deleteProduct(req, res)
 })
-// productRoutes.patch('/:id/update', uploadFile('products').array('images'), authenticate, authorize('admin'), validatePartial(updateProductSchema), (req, res) => {
-//     productController.updateProduct(req, res)
-// })
-// productRoutes.patch('/:id/update', parser.array('images'), authenticate, authorize('admin'), validatePartial(updateProductSchema), (req, res) => {
-//     productController.updateProduct(req, res)
-// })
 
-productRoutes.patch(
-    '/:id/update',
+productRoutes.patch('/:id/update',
     // Manejador de errores de Multer
     (req, res, next) => {
         parser.array('images')(req, res, (err) => {

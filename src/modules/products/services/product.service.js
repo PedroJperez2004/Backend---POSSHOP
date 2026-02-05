@@ -7,7 +7,6 @@ import { saveImages } from "../../../utils/saveImages.js";
 import { InventoryService } from "../../inventory/services/inventory.service.js";
 import { deleteImagesToCloudinary } from "../../../utils/deleteToCloudinary.js";
 
-
 import { uploadToCloudinary } from "../../../utils/uploadToCloudinary.js";
 
 export class ProductService {
@@ -15,6 +14,7 @@ export class ProductService {
     constructor() {
         this.taxService = new TaxService()
         this.inventoryService = new InventoryService()
+
     }
 
 
@@ -31,28 +31,17 @@ export class ProductService {
                 throw new Error('Máximo 1 imagen')
             }
 
-            // // const images = await saveImages(files, 'products');
 
-
-            // // --- Subida a Cloudinary solo si todo pasa ---
-            // const images = [];
-            // for (const file of files) {
-            //     const url = await uploadToCloudinary(file, 'products'); // aquí sube
-            //     images.push(url);
-            // }
-            ///////////////////
-            // 2. Switch Ambiental: ¿Local o Cloudinary?
             let images = [];
 
             if (process.env.NODE_ENV === 'production') {
-                // FLUJO PRODUCCIÓN (Cloudinary)
+
                 for (const file of files) {
                     const url = await uploadToCloudinary(file, 'products');
                     images.push(url);
                 }
             } else {
-                // FLUJO LOCAL (Guardado en disco/Docker)
-                // Usamos la función que tenías comentada
+
                 images = await saveImages(files, 'products');
             }
 
@@ -94,57 +83,6 @@ export class ProductService {
 
     }
 
-    // async updateProduct(id_shop, id, data, files) {
-    //     try {
-    //         // 1. Solo procesamos imágenes si se subieron archivos nuevos (files existe y tiene contenido)
-    //         if (files && files.length > 0) {
-    //             // const newImages = await saveImages(files, 'products');
-
-    //             const newImages = [];
-    //             for (const file of files) {
-    //                 const url = await uploadToCloudinary(file, 'products'); // aquí sube
-    //                 newImages.push(url);
-    //             }
-    //             if (newImages) {
-    //                 // Obtenemos las imágenes actuales antes de borrarlas
-    //                 const currentImages = await ProductRepository.getProductImages(id_shop, id);
-
-    //                 // Borramos los archivos físicos viejos solo porque hay nuevos
-    //                 // if (currentImages && currentImages.length > 0) {
-    //                 //     deleteImages(currentImages.map(img => img.url));
-    //                 // }
-    //                 console.log('CURRENTSS: ', currentImages);
-
-
-    //                 // if (currentImages && currentImages.length > 0) {
-    //                 //     await deleteImagesToCloudinary(currentImages.map(img => img.url));
-    //                 // }
-    //                 if (currentImages && currentImages.length > 0) {
-    //                     if (process.env.NODE_ENV === 'production') {
-    //                         // En PRODUCCIÓN: Borramos de Cloudinary
-    //                         await deleteImagesToCloudinary(currentImages.map(img => img.url));
-    //                     } else {
-    //                         // En DESARROLLO: Borramos de la carpeta local (Docker)
-    //                         // Nota: Aquí no suele ser necesario el 'await' a menos que tu función local sea async
-    //                         deleteImages(currentImages.map(img => img.url));
-    //                     }
-    //                 }
-
-    //                 // Actualizamos la base de datos con las nuevas rutas
-    //                 const [affectedRows] = await ProductRepository.updateImage(id_shop, id, newImages);
-    //                 if (affectedRows === 0) {
-    //                     await ProductRepository.createImage(id_shop, id, newImages);
-    //                 }
-    //             }
-    //         }
-
-    //         // 2. Actualizamos el resto de los datos (como el STOCK)
-    //         const result = await ProductRepository.updateProduct(id_shop, id, data);
-    //         return result;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
 
     async updateProduct(id_shop, id, data, files) {
         try {
@@ -296,13 +234,30 @@ export class ProductService {
                 throw error
             }
 
+            const movementsInventory = await this.inventoryService.getMovementByProduct(id_shop, id)
+            console.log('MMMMMMMMMM', movementsInventory)
+
+            if (movementsInventory.length > 0) {
+                const error = new Error
+                error.message = 'El producto seleccionado tiene movimientos de inventario asociados, no es posible eliminarlo'
+                error.status = 400
+                throw error
+            }
+
+
             const result = await ProductRepository.deleteProduct(id_shop, id)
 
+            const isProduction = process.env.NODE_ENV === 'production';
             if (result && result.length > 0) {
-                // IMPORTANTE: Usa await porque es una petición de red a Cloudinary
-                await deleteImagesToCloudinary(result);
+                if (isProduction) {
+
+                    await deleteImagesToCloudinary(result);
+                } else {
+                    deleteImages(result);
+                }
             }
-            // deleteImages(result)
+
+
             return { message: 'Producto eliminado correctamente' }
 
         } catch (error) {

@@ -5,37 +5,6 @@ export class UserController {
         this.userService = new UserService();
     }
 
-    // async login(req, res) {
-    //     try {
-    //         const result = await this.userService.loginUser(req.body)
-
-    //         res.cookie('access_token', result.token, {
-    //             httpOnly: true,
-    //             secure: process.env.NODE_ENV === 'production',
-    //             sameSite: 'none',
-    //             maxAge: 1000 * 60 * 60
-
-    //         })
-
-    //         res.cookie('refresh_token', result.refreshToken, {
-    //             httpOnly: true,
-    //             secure: process.env.NODE_ENV === 'production',
-    //             sameSite: 'none',
-    //             maxAge: 1000 * 60 * 60 * 24 * 7 // 7d
-    //         })
-
-    //         return res.status(200).json({
-    //             ok: true,
-    //             user: result.user
-    //         })
-
-    //     } catch (error) {
-    //         return res.status(error.status || 500).json({
-    //             ok: false,
-    //             message: error.message || 'Error interno'
-    //         })
-    //     }
-    // }
     async login(req, res) {
         try {
             const result = await this.userService.loginUser(req.body);
@@ -72,24 +41,6 @@ export class UserController {
         }
     }
 
-    // async logout(req, res) {
-    //     try {
-    //         await redis.del(`user:${req.user.id}:token`,
-    //             `user:${req.user.id}:refreshToken`
-
-    //         )
-    //         await res.clearCookie('access_token', {
-    //             httpOnly: true,
-    //             secure: process.env.NODE_ENV === 'production',
-    //             sameSite: 'none',
-    //             maxAge: 1000 * 60 * 60
-
-    //         }).json({ message: 'Sesion cerrada' })
-
-    //     } catch (error) {
-    //         res.status(500).json({ message: error.message });
-    //     }
-    // }
     async logout(req, res) {
         try {
             const isProd = process.env.NODE_ENV === 'production';
