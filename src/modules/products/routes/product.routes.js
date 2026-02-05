@@ -4,7 +4,7 @@ import { authenticate, authorize, validate, validatePartial } from '../../../mid
 import { productSchema } from "../../../middlewares/validation/product.schema.js";
 import { updateProductSchema } from "../../../middlewares/validation/update.product.shema.js";
 import { uploadFile } from "../../../middlewares/uploads/upload.middleware.js";
-
+import multer from 'multer';
 import parser from '../../../config/multer.js';
 
 
@@ -30,9 +30,32 @@ const productController = new ProductController()
 // );
 
 
+// productRoutes.post(
+//     '/create',
+//     parser.array('images'),  // Multer + Cloudinary
+//     authenticate,
+//     authorize('admin'),
+//     validate(productSchema),
+//     (req, res) => {
+//         productController.createProduct(req, res);
+//     }
+// );
+
 productRoutes.post(
     '/create',
-    parser.array('images'),  // Multer + Cloudinary
+    // Manejador de errores de Multer
+    (req, res, next) => {
+        parser.array('images')(req, res, (err) => {
+            if (err instanceof multer.MulterError) {
+                // Errores específicos de Multer (ej. archivo muy grande)
+                return res.status(400).json({ error: `Error de carga: ${err.message}` });
+            } else if (err) {
+                // Error de nuestro fileFilter (ej. no es una imagen)
+                return res.status(400).json({ error: err.message });
+            }
+            next();
+        });
+    },
     authenticate,
     authorize('admin'),
     validate(productSchema),
@@ -40,6 +63,7 @@ productRoutes.post(
         productController.createProduct(req, res);
     }
 );
+
 
 productRoutes.get('/:id/list-products-by-category', authenticate, authorize('admin', 'employee'), (req, res) => {
     productController.listProductsByCategory(req, res)
@@ -75,7 +99,29 @@ productRoutes.delete('/:id/delete', authenticate, authorize('admin'), (req, res)
 // productRoutes.patch('/:id/update', uploadFile('products').array('images'), authenticate, authorize('admin'), validatePartial(updateProductSchema), (req, res) => {
 //     productController.updateProduct(req, res)
 // })
-productRoutes.patch('/:id/update', parser.array('images'), authenticate, authorize('admin'), validatePartial(updateProductSchema), (req, res) => {
-    productController.updateProduct(req, res)
-})
+// productRoutes.patch('/:id/update', parser.array('images'), authenticate, authorize('admin'), validatePartial(updateProductSchema), (req, res) => {
+//     productController.updateProduct(req, res)
+// })
 
+productRoutes.patch(
+    '/:id/update',
+    // Manejador de errores de Multer
+    (req, res, next) => {
+        parser.array('images')(req, res, (err) => {
+            if (err instanceof multer.MulterError) {
+                // Errores específicos de Multer (ej. archivo muy grande)
+                return res.status(400).json({ error: `Error de carga: ${err.message}` });
+            } else if (err) {
+                // Error de nuestro fileFilter (ej. no es una imagen)
+                return res.status(400).json({ error: err.message });
+            }
+            next();
+        });
+    },
+    authenticate,
+    authorize('admin'),
+    validatePartial(updateProductSchema),
+    (req, res) => {
+        productController.updateProduct(req, res);
+    }
+);

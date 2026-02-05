@@ -34,12 +34,16 @@ export class ProductRepository {
 
     static updateProduct = async (id_shop, id, data) => {
         try {
-            return await models.Product.update(data, {
+            await models.Product.update(data, {
                 where: {
                     id,
                     id_shop
                 }
             });
+            const productWithImages = await models.Product.findByPk(id, {
+                include: 'images'
+            });
+            return productWithImages;
 
         } catch (error) {
             return

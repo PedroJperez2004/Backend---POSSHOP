@@ -31,14 +31,29 @@ export class ProductService {
                 throw new Error('Máximo 1 imagen')
             }
 
-            // const images = await saveImages(files, 'products');
+            // // const images = await saveImages(files, 'products');
 
 
-            // --- Subida a Cloudinary solo si todo pasa ---
-            const images = [];
-            for (const file of files) {
-                const url = await uploadToCloudinary(file, 'products'); // aquí sube
-                images.push(url);
+            // // --- Subida a Cloudinary solo si todo pasa ---
+            // const images = [];
+            // for (const file of files) {
+            //     const url = await uploadToCloudinary(file, 'products'); // aquí sube
+            //     images.push(url);
+            // }
+            ///////////////////
+            // 2. Switch Ambiental: ¿Local o Cloudinary?
+            let images = [];
+
+            if (process.env.NODE_ENV === 'production') {
+                // FLUJO PRODUCCIÓN (Cloudinary)
+                for (const file of files) {
+                    const url = await uploadToCloudinary(file, 'products');
+                    images.push(url);
+                }
+            } else {
+                // FLUJO LOCAL (Guardado en disco/Docker)
+                // Usamos la función que tenías comentada
+                images = await saveImages(files, 'products');
             }
 
 
@@ -79,31 +94,93 @@ export class ProductService {
 
     }
 
+    // async updateProduct(id_shop, id, data, files) {
+    //     try {
+    //         // 1. Solo procesamos imágenes si se subieron archivos nuevos (files existe y tiene contenido)
+    //         if (files && files.length > 0) {
+    //             // const newImages = await saveImages(files, 'products');
+
+    //             const newImages = [];
+    //             for (const file of files) {
+    //                 const url = await uploadToCloudinary(file, 'products'); // aquí sube
+    //                 newImages.push(url);
+    //             }
+    //             if (newImages) {
+    //                 // Obtenemos las imágenes actuales antes de borrarlas
+    //                 const currentImages = await ProductRepository.getProductImages(id_shop, id);
+
+    //                 // Borramos los archivos físicos viejos solo porque hay nuevos
+    //                 // if (currentImages && currentImages.length > 0) {
+    //                 //     deleteImages(currentImages.map(img => img.url));
+    //                 // }
+    //                 console.log('CURRENTSS: ', currentImages);
+
+
+    //                 // if (currentImages && currentImages.length > 0) {
+    //                 //     await deleteImagesToCloudinary(currentImages.map(img => img.url));
+    //                 // }
+    //                 if (currentImages && currentImages.length > 0) {
+    //                     if (process.env.NODE_ENV === 'production') {
+    //                         // En PRODUCCIÓN: Borramos de Cloudinary
+    //                         await deleteImagesToCloudinary(currentImages.map(img => img.url));
+    //                     } else {
+    //                         // En DESARROLLO: Borramos de la carpeta local (Docker)
+    //                         // Nota: Aquí no suele ser necesario el 'await' a menos que tu función local sea async
+    //                         deleteImages(currentImages.map(img => img.url));
+    //                     }
+    //                 }
+
+    //                 // Actualizamos la base de datos con las nuevas rutas
+    //                 const [affectedRows] = await ProductRepository.updateImage(id_shop, id, newImages);
+    //                 if (affectedRows === 0) {
+    //                     await ProductRepository.createImage(id_shop, id, newImages);
+    //                 }
+    //             }
+    //         }
+
+    //         // 2. Actualizamos el resto de los datos (como el STOCK)
+    //         const result = await ProductRepository.updateProduct(id_shop, id, data);
+    //         return result;
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // }
+
     async updateProduct(id_shop, id, data, files) {
         try {
-            // 1. Solo procesamos imágenes si se subieron archivos nuevos (files existe y tiene contenido)
+            // 1. Solo procesamos imágenes si se subieron archivos nuevos
             if (files && files.length > 0) {
-                // const newImages = await saveImages(files, 'products');
+                let newImages = [];
 
-                const newImages = [];
-                for (const file of files) {
-                    const url = await uploadToCloudinary(file, 'products'); // aquí sube
-                    newImages.push(url);
+                // Switch Ambiental para SUBIDA
+                if (process.env.NODE_ENV === 'production') {
+                    for (const file of files) {
+                        const url = await uploadToCloudinary(file, 'products');
+                        newImages.push(url);
+                    }
+                } else {
+                    newImages = await saveImages(files, 'products');
                 }
-                if (newImages) {
-                    // Obtenemos las imágenes actuales antes de borrarlas
+
+                if (newImages.length > 0) {
+                    // Obtenemos las imágenes actuales para limpiar
                     const currentImages = await ProductRepository.getProductImages(id_shop, id);
 
-                    // Borramos los archivos físicos viejos solo porque hay nuevos
-                    // if (currentImages && currentImages.length > 0) {
-                    //     deleteImages(currentImages.map(img => img.url));
-                    // }
-
+                    // Switch Ambiental para BORRADO (Limpieza)
                     if (currentImages && currentImages.length > 0) {
-                        await deleteImagesToCloudinary(currentImages.map(img => img.url));
+                        const imagesToDelete = currentImages.map(img => img.url);
+
+                        if (process.env.NODE_ENV === 'production') {
+                            await deleteImagesToCloudinary(imagesToDelete);
+                        } else {
+                            deleteImages(imagesToDelete);
+                        }
                     }
 
-                    // Actualizamos la base de datos con las nuevas rutas
+
+                    data.images = JSON.stringify(newImages);
+
+                    // Actualizamos o creamos en la tabla de relación/imágenes si es necesario
                     const [affectedRows] = await ProductRepository.updateImage(id_shop, id, newImages);
                     if (affectedRows === 0) {
                         await ProductRepository.createImage(id_shop, id, newImages);
@@ -111,13 +188,14 @@ export class ProductService {
                 }
             }
 
-            // 2. Actualizamos el resto de los datos (como el STOCK)
-            const result = await ProductRepository.updateProduct(id_shop, id, data);
-            return result;
+            return await ProductRepository.updateProduct(id_shop, id, data);
+
         } catch (error) {
+            console.error("Error en updateProduct Service:", error);
             throw error;
         }
     }
+
     async listProductsByCategory(id_shop, id_category) {
         try {
             const result = await ProductRepository.listProductsByCategory(id_shop, id_category)

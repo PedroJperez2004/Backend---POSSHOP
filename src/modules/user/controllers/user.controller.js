@@ -5,58 +5,117 @@ export class UserController {
         this.userService = new UserService();
     }
 
+    // async login(req, res) {
+    //     try {
+    //         const result = await this.userService.loginUser(req.body)
+
+    //         res.cookie('access_token', result.token, {
+    //             httpOnly: true,
+    //             secure: process.env.NODE_ENV === 'production',
+    //             sameSite: 'none',
+    //             maxAge: 1000 * 60 * 60
+
+    //         })
+
+    //         res.cookie('refresh_token', result.refreshToken, {
+    //             httpOnly: true,
+    //             secure: process.env.NODE_ENV === 'production',
+    //             sameSite: 'none',
+    //             maxAge: 1000 * 60 * 60 * 24 * 7 // 7d
+    //         })
+
+    //         return res.status(200).json({
+    //             ok: true,
+    //             user: result.user
+    //         })
+
+    //     } catch (error) {
+    //         return res.status(error.status || 500).json({
+    //             ok: false,
+    //             message: error.message || 'Error interno'
+    //         })
+    //     }
+    // }
     async login(req, res) {
         try {
-            const result = await this.userService.loginUser(req.body)
+            const result = await this.userService.loginUser(req.body);
+            const isProd = process.env.NODE_ENV === 'production';
 
+            const cookieOptions = {
+                httpOnly: true,
+                secure: isProd,
+                sameSite: isProd ? 'none' : 'strict',
+            };
+
+            // Access Token
             res.cookie('access_token', result.token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'none',
-                maxAge: 1000 * 60 * 60
+                ...cookieOptions,
+                maxAge: 1000 * 60 * 60 // 1h
+            });
 
-            })
-
+            // Refresh Token
             res.cookie('refresh_token', result.refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'none',
+                ...cookieOptions,
                 maxAge: 1000 * 60 * 60 * 24 * 7 // 7d
-            })
+            });
 
             return res.status(200).json({
                 ok: true,
                 user: result.user
-            })
+            });
 
         } catch (error) {
             return res.status(error.status || 500).json({
                 ok: false,
                 message: error.message || 'Error interno'
-            })
+            });
         }
     }
 
+    // async logout(req, res) {
+    //     try {
+    //         await redis.del(`user:${req.user.id}:token`,
+    //             `user:${req.user.id}:refreshToken`
 
+    //         )
+    //         await res.clearCookie('access_token', {
+    //             httpOnly: true,
+    //             secure: process.env.NODE_ENV === 'production',
+    //             sameSite: 'none',
+    //             maxAge: 1000 * 60 * 60
+
+    //         }).json({ message: 'Sesion cerrada' })
+
+    //     } catch (error) {
+    //         res.status(500).json({ message: error.message });
+    //     }
+    // }
     async logout(req, res) {
         try {
-            await redis.del(`user:${req.user.id}:token`,
-                `user:${req.user.id}:refreshToken`
+            const isProd = process.env.NODE_ENV === 'production';
+            const userId = req.user.id;
 
-            )
-            await res.clearCookie('access_token', {
+            // 1. Borramos de Redis (ambos tokens a la vez)
+            // Como vimos antes, esto sirve para Docker y Upstash
+            await redis.del(`user:${userId}:token`, `user:${userId}:refreshToken`);
+
+            // 2. Limpiamos las cookies con las mismas opciones de creación
+            const clearOptions = {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'none',
-                maxAge: 1000 * 60 * 60
+                secure: isProd,
+                sameSite: isProd ? 'none' : 'strict',
+            };
 
-            }).json({ message: 'Sesion cerrada' })
+            res.clearCookie('access_token', clearOptions);
+            res.clearCookie('refresh_token', clearOptions);
+
+            return res.status(200).json({ message: 'Sesión cerrada correctamente' });
 
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            console.error("Error en Logout:", error);
+            return res.status(500).json({ message: error.message });
         }
     }
-
     async register(req, res) {
         try {
             req.body = {

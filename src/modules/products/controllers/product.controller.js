@@ -36,9 +36,10 @@ export class ProductController {
                 }
 
             }
+            const files = req.files || [];
 
-
-            if (req.files.length > 1) {
+            console.log('FILES: ', req.files);
+            if (files.length > 1) {
                 throw new Error('Máximo 1 imagen')
             }
             const product = await this.productService.listProductById(id_shop, id)
@@ -46,7 +47,7 @@ export class ProductController {
                 ...req.body
             }
 
-            const result = await this.productService.updateProduct(id_shop, product.id, data, req.files)
+            const result = await this.productService.updateProduct(id_shop, product.id, data, files)
             return res.status(200).json({ Ok: true, Product: result })
         } catch (error) {
             return res.status(500).json({ message: error.message })
