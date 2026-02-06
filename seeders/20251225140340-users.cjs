@@ -5,14 +5,14 @@ const SALT_ROUNDS = 10;
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const hashedPassword = await bcrypt.hash('@12345Admin', SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash('@12345User', SALT_ROUNDS);
     await queryInterface.bulkInsert('users', [
       {
         id: uuidv4(),
-        userName: 'UserAdmin',
-        firstName: 'Admin',
-        lastName: 'admin',
-        email: 'admin@gmail.com',
+        userName: 'UserUser',
+        firstName: 'User',
+        lastName: 'User',
+        email: 'user@gmail.com',
         phone: '12345678910',
         password: hashedPassword,
         role: 'admin',

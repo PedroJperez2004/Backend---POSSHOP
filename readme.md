@@ -1,76 +1,133 @@
-# 🛍️ POSSHOP - Backend API
+# 🛍️ POSSHOP - Sistema de Punto de Venta (Backend)
 
-API RESTful que sirve como el núcleo del sistema de Punto de Venta (POS) **POSSHOP**. Este proyecto está diseñado y desplegado con un enfoque en escalabilidad, rendimiento y mantenibilidad, utilizando un stack de tecnologías modernas.
+![Estado del Proyecto: En Producción](https://img.shields.io/badge/Estado-En_Producci%C3%B3n-brightgreen?style=for-the-badge)
 
----
+## 📝 Descripción
 
-## 🚧 Estado del Proyecto
+**POSSHOP** es el backend de un sistema de Punto de Venta (POS) robusto y escalable, diseñado para gestionar las operaciones comerciales de una tienda. Esta API RESTful maneja desde la autenticación de usuarios y la gestión de productos hasta el control de inventario y el procesamiento de ventas.
 
-**Este proyecto se encuentra en desarrollo activo.** La versión desplegada actualmente es un **MVP (Producto Mínimo Viable)** funcional que demuestra la arquitectura central y las funcionalidades clave. El roadmap incluye la implementación de nuevas características y la mejora continua de la base de código.
+Este proyecto fue desarrollado como una solución completa y funcional, demostrando habilidades avanzadas en el desarrollo backend. Actualmente, **se encuentra en producción y funcionando**, pero sigue bajo desarrollo y mejora continua para añadir nuevas funcionalidades.
 
-La interfaz de usuario (frontend) asociada está en esta misma fase de desarrollo y, en su estado actual, se encuentra optimizada para una experiencia de escritorio. La adaptabilidad para dispositivos móviles es una de las próximas prioridades del proyecto global.
+## ✨ Características Principales
 
----
+*   **🔐 Autenticación y Autorización:** Sistema seguro basado en JSON Web Tokens (JWT) para proteger las rutas y gestionar los roles de los usuarios.
+*   **📦 Gestión de Productos:** CRUD completo para productos, categorías e impuestos.
+*   **🖼️ Almacenamiento de Imágenes:** Carga de imágenes de productos a servicios en la nube (Cloudinary) a través de `multer`.
+*   **📈 Control de Inventario:** Seguimiento de stock en tiempo real para cada producto.
+*   **💸 Procesamiento de Ventas:** Lógica para registrar ventas y los artículos correspondientes, actualizando el inventario automáticamente.
+*   **🛡️ Validación de Datos:** Uso de `Zod` para validar los datos de entrada en las solicitudes, garantizando la integridad de la información.
+*   **📋 Auditoría:** Registro de logs para eventos importantes en el sistema.
 
-## 🎯 Funcionalidades Principales
+## 🚀 Tecnologías Utilizadas
 
-Este backend gestiona toda la lógica de negocio y la persistencia de datos para la aplicación:
+Este proyecto utiliza un stack de tecnologías moderno y eficiente para garantizar el mejor rendimiento.
 
--   👤 **Módulo de Autenticación y Usuarios:**
-    -   Registro y login de usuarios.
-    -   Autenticación basada en **JSON Web Tokens (JWT)** para proteger las rutas.
-    -   Refresh tokens para una gestión de sesión segura y persistente.
+### **Backend**
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![Sequelize](https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=sequelize&logoColor=white)
 
--   📦 **Gestión de Inventario:**
-    -   CRUD completo para Productos.
-    -   Administración de Categorías de productos e Impuestos aplicables.
-    -   Lógica para el control de stock.
+### **Base de Datos**
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 
--   📈 **Módulo de Ventas:**
-    -   Creación y registro de transacciones de venta.
-    -   Generación de reportes de ventas (futura implementación).
+### **Herramientas y Otros**
+![JSON Web Tokens](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white)
+![dotenv](https://img.shields.io/badge/dotenv-ECD53F?style=for-the-badge&logo=dotenv&logoColor=black)
+![Nodemon](https://img.shields.io/badge/Nodemon-76D04B?style=for-the-badge&logo=nodemon&logoColor=white)
 
--   🖼️ **Gestión de Medios:**
-    -   Subida de imágenes de productos desacoplada del servidor, gestionada enteramente por un servicio externo.
+## 🔧 Puesta en Marcha Local
 
----
+Para correr este proyecto en tu máquina local, sigue esta guía paso a paso.
 
-## 🏗️ Arquitectura y Despliegue en Producción
+### **1. Prerrequisitos**
 
-El proyecto está construido pensando en un entorno de producción real, separando las responsabilidades y utilizando servicios gestionados para optimizar el rendimiento y la disponibilidad.
+Asegúrate de tener instalado el siguiente software:
 
--   **Hosting del Backend:**
-    -   La API está alojada en **Render**. El código fuente está sincronizado desde un repositorio de GitHub.
-    -   El despliegue de nuevas versiones se realiza de forma **manual** desde el panel de control de Render. Este método se utiliza para tener un control estricto sobre las actualizaciones que llegan a producción, permitiendo una validación final antes de cada lanzamiento.
+*   **Node.js:** Versión 18 o superior.
+*   **npm:** Generalmente se instala con Node.js.
+*   **Docker:** Para correr los servicios de base de datos. Si no lo tienes, [instálalo desde la web oficial](https://docs.docker.com/get-docker/).
 
--   **Base de Datos:**
-    -   Utiliza **Aiven** para hospedar una base de datos **MySQL gestionada**. Esto elimina la necesidad de administrar la infraestructura de la base de datos y garantiza alta disponibilidad y backups automáticos.
-    📄 [Ver Diagrama de la Base de Datos PDF](docs/DiagramaDatabase.pdf)
+### **2. Guía de Instalación**
+
+Sigue estos comandos en tu terminal:
+
+1.  **Clona el repositorio y entra al directorio:**
+    ```bash
+    git clone <URL-del-repositorio>
+    cd POSSHOP-Desarrollo
+    ```
+
+2.  **Instala todas las dependencias del proyecto:**
+    Esto instalará Express, Sequelize, y todo lo necesario que está definido en `package.json`.
+    ```bash
+    npm install
+    ```
+
+3.  **Inicia los servicios de base de datos con Docker:**
+    Este comando (definido en `package.json`) levantará los contenedores de MySQL y Redis.
+    ```bash
+    npm run docker
+    ```
+
+4.  **Crea y configura las variables de entorno:**
+    Crea un archivo llamado `.env` en la raíz del proyecto. Copia el contenido de abajo y ajústalo si es necesario (aunque las credenciales por defecto deberían funcionar con el setup de Docker).
+    ```dotenv
+    # Server Configuration
+    PORT=3000
+    HOST=http://localhost:3000
+
+    # Database (MySQL)
+    DB_USER=root
+    DB_PASSWORD=your_mysql_password
+    DB_HOST=localhost
+    DB_NAME=posshop
+    DB_PORT=3306
+
+    # Authentication (JWT)
+    JWT_SECRET=your_super_secret_jwt_key
+    JWT_REFRESH_SECRET=your_super_secret_refresh_key
+
+    # Redis
+    REDIS_URL="redis://:your_redis_url@localhost:6379"
 
 
--   **Caché en Memoria:**
-    -   Implementa **Redis** a través de **Upstash** como servicio de caché. Se utiliza para almacenar en caché respuestas de API frecuentes, reduciendo la latencia y la carga sobre la base de datos principal.
+    # Cors
+    ORIGIN=http://localhost:5173 # O la URL de tu frontend
+    ```
 
--   **Almacenamiento de Imágenes:**
-    -   La subida de imágenes de productos se maneja con **Cloudinary**. Las imágenes se envían directamente desde el cliente o a través del servidor al servicio de Cloudinary, evitando almacenar archivos en el sistema de ficheros del contenedor de Render. Esto mejora la escalabilidad y velocidad de entrega de contenido.
+5.  **Ejecuta las migraciones de la base de datos:**
+    Este comando creará toda la estructura de tablas en la base de datos MySQL que Docker acaba de iniciar.
+    ```bash
+    npx sequelize-cli db:migrate
+    ```
 
----
+6.  **(Recomendado) Puebla la base de datos con datos de prueba:**
+    ```bash
+    npx sequelize-cli db:seed:all
+    ```
 
-## 💻 Pila Tecnológica (Stack)
+7.  **¡Inicia el servidor!**
+    ```bash
+    npm run dev
+    ```
 
-| Componente | Tecnología | Razón de la Elección |
-| :--- | :--- | :--- |
-| 🟢 **Runtime** | **Node.js** | Entorno de ejecución asíncrono y de alto rendimiento para APIs. |
-| ⚫ **Framework** | **Express.js** | Framework minimalista y robusto para la creación de APIs en Node.js. |
-| 🗃️ **Base de Datos** | **Aiven for MySQL** | Servicio de base de datos gestionada que provee una instancia de MySQL robusta, escalable y con backups automatizados. |
-| 🐘 **ORM** | **Sequelize** | ORM maduro que facilita la interacción con la base de datos SQL. |
-| ⚡ **Caché** | **Upstash (Redis)** | Redis como servicio (serverless) para una caché rápida y de baja latencia sin gestión de servidores. |
-| ☁️ **Imágenes** | **Cloudinary**| Plataforma líder para la gestión de medios que optimiza y distribuye imágenes globalmente (CDN). |
-| 🔐 **Seguridad** | **JWT & bcrypt** | Estándares de la industria para la autenticación y el hashing seguro de contraseñas. |
-| 📜 **Validación** | **Zod** | Validación de esquemas con inferencia de tipos estáticos, asegurando la integridad de los datos. |
+8.  **Inicia Sesión con el Usuario de Prueba**
+    Después de poblar la base de datos, se crea un usuario por defecto para que puedas empezar a probar la API. Puedes usar estas credenciales para obtener un token de autenticación:
 
----
+    *   **email:** `user@gmail.com`
+    *   **password:** `@12345User`
 
-## 📄 Licencia
+    > **Nota:** Estas credenciales están definidas en el seeder `20251225140340-users.cjs`. Puedes modificarlas en ese archivo si lo deseas antes de poblar la base de datos.
 
-Este proyecto es de mi propiedad y sirve como demostración de mis habilidades.
+¡Y listo! 🎉 La API estará funcionando en `http://localhost:3000` y conectada a todos los servicios.
+
+##  nota para entrevistadores
+
+Este proyecto fue concebido como una demostración práctica de mis habilidades en el desarrollo de software. No solo implementa funcionalidades complejas, sino que también sigue buenas prácticas de la industria como:
+
+*   **Separación de Competencias:** Lógica de negocio, acceso a datos y controladores claramente definidos (Servicios, Repositorios, Controladores).
+*   **Seguridad:** Implementación de autenticación, autorización y validación de datos.
+*   **Gestión de Entorno:** Uso de variables de entorno para una configuración segura y flexible.
+*   **ORM y Migraciones:** Gestión profesional de la base de datos con Sequelize.
