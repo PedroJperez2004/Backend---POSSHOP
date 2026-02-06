@@ -127,3 +127,12 @@ Este es un proyecto personal desarrollado con el objetivo de aplicar y demostrar
 *   **Seguridad:** Implementación de autenticación, autorización y validación de datos.
 *   **Gestión de Entorno:** Uso de variables de entorno para una configuración segura y flexible.
 *   **ORM y Migraciones:** Gestión profesional de la base de datos con Sequelize.
+
+## 🌐 Despliegue en Producción
+
+Actualmente, los servicios en producción están distribuidos de la siguiente manera:
+
+*   **Base de Datos (MySQL):** Aiven
+*   **Redis:** Upstash
+*   **Cuerpo del Proyecto (Backend):** Render
+
