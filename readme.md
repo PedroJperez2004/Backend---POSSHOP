@@ -119,6 +119,67 @@ Sigue estos comandos en tu terminal:
 
 ¡Y listo! 🎉 La API estará funcionando en `http://localhost:3000` y conectada a todos los servicios.
 
+## 🔩 Funcionalidades Detalladas
+
+### 👤 Roles y Permisos
+
+El sistema define dos roles de usuario con diferentes niveles de acceso para garantizar la seguridad y la correcta segregación de funciones.
+
+*   **Administrador**: Tiene acceso total a todas las funcionalidades del sistema. Este rol está diseñado para la gestión integral de la tienda.
+*   **Empleado**: Tiene permisos limitados, enfocados exclusivamente en las operaciones diarias de venta y consulta. No puede crear, editar ni borrar recursos.
+
+| Funcionalidad | Administrador | Empleado |
+| :--- | :---: | :---: |
+| **Gestión de Usuarios** (Crear, Asignar roles) | ✅ | ❌ |
+| **Gestión de Tienda** | ✅ | ❌ |
+| **CRUD de Productos** | ✅ | ❌ |
+| **CRUD de Categorías** | ✅ | ❌ |
+| **CRUD de Impuestos** | ✅ | ❌ |
+| **Gestión de Inventario** | ✅ | ❌ |
+| **Crear Ventas** | ✅ | ✅ |
+| **Ver Historial de Ventas** | ✅ | ✅ |
+| **Listar Productos y Categorías**| ✅ | ✅ |
+
+Cualquier intento de acceder a una funcionalidad no permitida devolverá un error `403 Forbidden`.
+
+### 🔐 Gestión de Usuarios
+
+La gestión de usuarios es una parte central de la seguridad del sistema.
+
+*   **Crear Usuarios**: Solo los **Administradores** pueden crear nuevos usuarios y asignarles un rol.
+*   **Login y Refresh Token**: El sistema utiliza un esquema de autenticación con dos tokens:
+    *   **Access Token**: Un token de corta duración para acceder a los recursos protegidos.
+    *   **Refresh Token**: Un token de larga duración que se usa para obtener un nuevo `access token` sin que el usuario tenga que volver a iniciar sesión.
+*   **Activar / Desactivar Usuarios**: (Funcionalidad futura) Se planea implementar la capacidad de desactivar usuarios sin eliminarlos de la base de datos.
+
+### 🧾 Ventas
+
+El módulo de ventas está diseñado para ser rápido y eficiente.
+
+*   **Registro de Múltiples Productos**: Permite registrar una venta con uno o varios productos en una sola transacción.
+*   **Cálculo Automático**: Los totales, subtotales e impuestos se calculan automáticamente en el backend.
+*   **Actualización de Stock**: El inventario de cada producto vendido se descuenta automáticamente para mantener el stock sincronizado en tiempo real.
+*   **Relación Venta-Usuario**: Cada venta queda asociada al usuario (empleado o administrador) que la procesó, permitiendo auditorías y seguimiento.
+
+### ⚠️ Manejo de Errores
+
+La API utiliza un sistema estandarizado para comunicar errores de forma clara.
+
+*   **Respuestas de Error Estándar**:
+    *   `400 Bad Request`: Datos de entrada inválidos.
+    *   `401 Unauthorized`: Autenticación requerida.
+    *   `403 Forbidden`: Permisos insuficientes para el recurso.
+    *   `404 Not Found`: Recurso no encontrado.
+    *   `500 Internal Server Error`: Error inesperado en el servidor.
+*   **Validaciones con Zod**: Antes de procesar cualquier solicitud, se valida la estructura y los tipos de datos con `Zod`. Si la validación falla, se devuelve un error `400` con un mensaje detallado que especifica qué campos son incorrectos.
+
+### 🔌 Integraciones
+
+*   **Bases de Datos en Docker**: Para el entorno de desarrollo local, las dependencias de la base de datos se gestionan fácilmente con Docker:
+    *   **MySQL**: Almacena toda la información persistente (productos, usuarios, ventas, etc.).
+    *   **Redis**: Se utiliza para gestionar la lista de `refresh tokens` invalidados, lo que mejora la seguridad al permitir el cierre de sesión forzado.
+    Ambos servicios se inician con el comando `npm run docker`.
+
 ## 🎯 Acerca de este Proyecto
 
 Este es un proyecto personal desarrollado con el objetivo de aplicar y demostrar habilidades en el desarrollo de software backend. Se ha puesto especial atención en implementar funcionalidades complejas y seguir buenas prácticas de la industria, como:
@@ -135,4 +196,3 @@ Actualmente, los servicios en producción están distribuidos de la siguiente ma
 *   **Base de Datos (MySQL):** Aiven
 *   **Redis:** Upstash
 *   **Cuerpo del Proyecto (Backend):** Render
-
