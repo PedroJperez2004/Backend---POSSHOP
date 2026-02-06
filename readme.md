@@ -4,9 +4,9 @@
 
 ## 📝 Descripción
 
-**POSSHOP** es el backend de un sistema de Punto de Venta (POS) robusto y escalable, diseñado para gestionar las operaciones comerciales de una tienda. Esta API RESTful maneja desde la autenticación de usuarios y la gestión de productos hasta el control de inventario y el procesamiento de ventas.
+**POSSHOP** es el backend de un sistema de Punto de Venta (POS) senciilo y escalable. Esta API REST maneja desde la autenticación de usuarios y la gestión de productos hasta el control de inventario y el procesamiento de ventas.
 
-Este proyecto fue desarrollado como una solución completa y funcional, demostrando habilidades avanzadas en el desarrollo backend. Actualmente, **se encuentra en producción y funcionando**, pero sigue bajo desarrollo y mejora continua para añadir nuevas funcionalidades.
+Este proyecto representa la **primera versión funcional** de la plataforma, y aunque **ya se encuentra en un entorno de producción**, se mantiene en **desarrollo activo**. Esto significa que esoty trabajando en nuevas características, optimizaciones y mejoras para hacer de POSSHOP una solución aún más completa.
 
 ## ✨ Características Principales
 
@@ -55,7 +55,7 @@ Sigue estos comandos en tu terminal:
 
 1.  **Clona el repositorio y entra al directorio:**
     ```bash
-    git clone <URL-del-repositorio>
+    git clone git@github.com:PedroJperez2004/Backend---POSSHOP.git
     cd POSSHOP-Desarrollo
     ```
 
@@ -123,9 +123,9 @@ Sigue estos comandos en tu terminal:
 
 ¡Y listo! 🎉 La API estará funcionando en `http://localhost:3000` y conectada a todos los servicios.
 
-##  nota para entrevistadores
+## 🎯 Acerca de este Proyecto
 
-Este proyecto fue concebido como una demostración práctica de mis habilidades en el desarrollo de software. No solo implementa funcionalidades complejas, sino que también sigue buenas prácticas de la industria como:
+Este es un proyecto personal desarrollado con el objetivo de aplicar y demostrar habilidades en el desarrollo de software backend. Se ha puesto especial atención en implementar funcionalidades complejas y seguir buenas prácticas de la industria, como:
 
 *   **Separación de Competencias:** Lógica de negocio, acceso a datos y controladores claramente definidos (Servicios, Repositorios, Controladores).
 *   **Seguridad:** Implementación de autenticación, autorización y validación de datos.
