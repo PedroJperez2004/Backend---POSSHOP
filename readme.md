@@ -91,11 +91,7 @@ Sigue estos comandos en tu terminal:
 
     # Redis
     REDIS_URL="redis://:your_redis_url@localhost:6379"
-
-
-    # Cors
-    ORIGIN=http://localhost:5173 # O la URL de tu frontend
-    ```
+    NODE_ENV=development
 
 5.  **Ejecuta las migraciones de la base de datos:**
     Este comando creará toda la estructura de tablas en la base de datos MySQL que Docker acaba de iniciar.
