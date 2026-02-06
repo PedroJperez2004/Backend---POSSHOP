@@ -4,9 +4,9 @@
 
 ## 📝 Descripción
 
-**POSSHOP** es el backend de un sistema de Punto de Venta (POS) senciilo y escalable. Esta API REST maneja desde la autenticación de usuarios y la gestión de productos hasta el control de inventario y el procesamiento de ventas.
+**POSSHOP** es el backend de un sistema de Punto de Venta (POS) sencillo y escalable. Esta API REST maneja desde la autenticación de usuarios y la gestión de productos hasta el control de inventario y el procesamiento de ventas.
 
-Este proyecto representa la **primera versión funcional** de la plataforma, y aunque **ya se encuentra en un entorno de producción**, se mantiene en **desarrollo activo**. Esto significa que esoty trabajando en nuevas características, optimizaciones y mejoras para hacer de POSSHOP una solución aún más completa.
+Este proyecto representa la **primera versión funcional** de la plataforma, y aunque **ya se encuentra en un entorno de producción**, se mantiene en **desarrollo activo**. Esto significa que estoy trabajando en nuevas características, optimizaciones y mejoras para hacer de POSSHOP una solución aún más completa.
 
 ## ✨ Características Principales
 
