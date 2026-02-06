@@ -12,7 +12,7 @@ Este proyecto representa la **primera versión funcional** de la plataforma, y a
 
 *   **🔐 Autenticación y Autorización:** Sistema seguro basado en JSON Web Tokens (JWT) para proteger las rutas y gestionar los roles de los usuarios.
 *   **📦 Gestión de Productos:** CRUD completo para productos, categorías e impuestos.
-*   **🖼️ Almacenamiento de Imágenes:** Carga de imágenes de productos a servicios en la nube (Cloudinary) a través de `multer`.
+*   **🖼️ Almacenamiento de Imágenes:** Carga de imágenes de productos a servicios en la nube (Cloudinary) a través de `multer`, pero en local se guardarán en los archivos de tu computador.
 *   **📈 Control de Inventario:** Seguimiento de stock en tiempo real para cada producto.
 *   **💸 Procesamiento de Ventas:** Lógica para registrar ventas y los artículos correspondientes, actualizando el inventario automáticamente.
 *   **🛡️ Validación de Datos:** Uso de `Zod` para validar los datos de entrada en las solicitudes, garantizando la integridad de la información.
@@ -80,7 +80,7 @@ Sigue estos comandos en tu terminal:
 
     # Database (MySQL)
     DB_USER=root
-    DB_PASSWORD=your_mysql_password
+    DB_PASSWORD=root
     DB_HOST=localhost
     DB_NAME=posshop
     DB_PORT=3306
@@ -90,7 +90,7 @@ Sigue estos comandos en tu terminal:
     JWT_REFRESH_SECRET=your_super_secret_refresh_key
 
     # Redis
-    REDIS_URL="redis://:your_redis_url@localhost:6379"
+    REDIS_URL=redis://localhost:6379
     NODE_ENV=development
 
 5.  **Ejecuta las migraciones de la base de datos:**
