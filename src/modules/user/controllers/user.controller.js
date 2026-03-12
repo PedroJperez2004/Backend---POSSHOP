@@ -26,6 +26,7 @@ export class UserController {
             res.cookie('refresh_token', result.refreshToken, {
                 ...cookieOptions,
                 maxAge: 1000 * 60 * 60 * 24 * 7 // 7d
+                
             });
 
             return res.status(200).json({

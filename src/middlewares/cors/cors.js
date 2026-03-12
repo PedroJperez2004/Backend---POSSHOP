@@ -4,6 +4,7 @@ import cors from 'cors';
 const allowedOrigins = [
     'http://localhost:5173',
     'https://frontend-posshop.vercel.app', // Asegúrate de que esta sea tu URL real de Vercel
+    'https://posshop-pos.vercel.app',
     'https://frontend-posshop-ajg3lchep-pedrojperez2004s-projects.vercel.app'
 ];
 
